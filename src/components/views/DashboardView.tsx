@@ -414,12 +414,16 @@ export default function DashboardView({
                 <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} axisLine={false} />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: '#1E293B', 
-                    borderRadius: '8px', 
-                    border: 'none',
-                    color: '#fff',
-                    fontSize: '12px'
+                    backgroundColor: '#ffffff', 
+                    borderRadius: '12px', 
+                    border: '1px solid #cbd5e1',
+                    color: '#0f172a',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
                   }} 
+                  itemStyle={{ color: '#0f172a', fontWeight: 'bold' }}
+                  labelStyle={{ color: '#0f172a', fontWeight: 'bold' }}
                 />
                 <Area type="monotone" dataKey="sales" name="Sales Revenue" stroke="#1F5F98" strokeWidth={2} fillOpacity={1} fill="url(#colorSales)" />
                 <Area type="monotone" dataKey="topups" name="Top-ups Executed" stroke="#F68B2D" strokeWidth={2} fillOpacity={1} fill="url(#colorTopups)" />
@@ -780,12 +784,16 @@ export default function DashboardView({
               <Tooltip 
                 formatter={(val) => [`$${val}`, 'Topups Approved']}
                 contentStyle={{ 
-                  backgroundColor: '#1E293B', 
-                  borderRadius: '8px', 
-                  border: 'none',
-                  color: '#fff',
-                  fontSize: '12px'
+                  backgroundColor: '#ffffff', 
+                  borderRadius: '12px', 
+                  border: '1px solid #cbd5e1',
+                  color: '#0f172a',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
                 }} 
+                itemStyle={{ color: '#0f172a', fontWeight: 'bold' }}
+                labelStyle={{ color: '#0f172a', fontWeight: 'bold' }}
               />
               <Bar dataKey="amount" radius={[8, 8, 0, 0]}>
                 {topCustomersData.map((entry, index) => (

@@ -278,7 +278,7 @@ button.bg-\[\#1F5F98\] *,
 #channel-analytics-panel .bg-navy-header *,
 #channel-analytics-panel .card-header-title,
 #channel-analytics-panel th {
-  background-color: #1F3A5F !important;
+  background-color: #154A7D !important;
   color: #ffffff !important;
 }
 
@@ -804,15 +804,17 @@ header .header-profile-menu-item-red:focus {
   bottom: 125%;
   left: 50%;
   transform: translate(-50%, 4px) scale(0.95);
-  background-color: #1F5F98 !important;
-  color: #ffffff !important;
-  padding: 3px 6px !important; /* Compact, small padding */
-  border-radius: 4px !important; /* Small, clean border radius */
-  font-size: 10px !important; /* Minimal size */
-  font-weight: 500 !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  padding: 5px 10px !important;
+  border-radius: 8px !important;
+  border: 1px solid #cbd5e1 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
   line-height: 1.2;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(31, 95, 152, 0.25) !important; /* Subtle shadow */
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 4px 6px -4px rgba(0, 0, 0, 0.08) !important;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
@@ -824,29 +826,32 @@ header .header-profile-menu-item-red:focus {
   transform: translate(-50%, 0) scale(1);
 }
 
-/* Recharts compact, brand-blue tooltips */
+/* Recharts compact, white tooltips */
 .recharts-tooltip-wrapper {
-  background-color: #1F5F98 !important;
-  border-radius: 4px !important;
-  border: none !important;
-  padding: 3px 6px !important;
-  box-shadow: 0 4px 12px rgba(31, 95, 152, 0.2) !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  border: 1px solid #cbd5e1 !important;
+  padding: 0 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 4px 6px -4px rgba(0, 0, 0, 0.08) !important;
 }
 
 .recharts-default-tooltip {
-  background-color: #1F5F98 !important;
-  border-radius: 4px !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border-radius: 12px !important;
   border: none !important;
-  padding: 3px 6px !important;
+  padding: 8px 12px !important;
+  color: #0f172a !important;
 }
 
 .recharts-default-tooltip .recharts-tooltip-item,
 .recharts-default-tooltip span,
 .recharts-default-tooltip p,
 .recharts-tooltip-label {
-  color: #ffffff !important;
-  font-size: 10px !important;
-  font-weight: 500 !important;
+  color: #0f172a !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
 }
 
 /* 12.3 Data Row Hover & Scale-Up Styles */
@@ -1229,22 +1234,45 @@ option {
 }
 
 /* ==========================================
-   18. Recharts Tooltip White Background Override
+   18. Universal Full White Tooltip Master Rule (No Overrides)
    ========================================== */
-.recharts-default-tooltip {
+.recharts-tooltip-wrapper,
+.recharts-default-tooltip,
+.tooltip,
+.tooltip-content,
+[data-tooltip]::before,
+#main-content-pane .recharts-tooltip-wrapper,
+#main-content-pane .recharts-default-tooltip,
+#main-content-pane .tooltip,
+#main-content-pane .tooltip-content,
+#main-content-pane [data-tooltip]::before,
+.dark .recharts-tooltip-wrapper,
+.dark .recharts-default-tooltip,
+.dark .tooltip,
+.dark .tooltip-content,
+.dark [data-tooltip]::before {
   background-color: #ffffff !important;
+  background: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
   border-radius: 12px !important;
   color: #0f172a !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
-  padding: 10px 14px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 4px 6px -4px rgba(0, 0, 0, 0.08) !important;
 }
 
+.recharts-tooltip-wrapper *,
 .recharts-default-tooltip *,
-.recharts-tooltip-item,
-.recharts-tooltip-item-name,
-.recharts-tooltip-item-value,
-.recharts-tooltip-label {
+.tooltip *,
+.tooltip-content *,
+[data-tooltip]::before,
+#main-content-pane .recharts-tooltip-wrapper *,
+#main-content-pane .recharts-default-tooltip *,
+#main-content-pane .tooltip *,
+#main-content-pane .tooltip-content *,
+#main-content-pane [data-tooltip]::before,
+.dark .recharts-tooltip-wrapper *,
+.dark .recharts-default-tooltip *,
+.dark .tooltip *,
+.dark .tooltip-content *,
+.dark [data-tooltip]::before {
   color: #0f172a !important;
-  font-weight: 700 !important;
 }

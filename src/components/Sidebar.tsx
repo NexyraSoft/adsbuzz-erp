@@ -189,8 +189,8 @@ export default function Sidebar({ activeView, onNavigate, mobileOpen = false, on
 
                   {/* Sleek Floating Tooltip in Collapsed Mode */}
                   {isCollapsed && hoveredItem === item.id && (
-                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1.5 bg-slate-900 border border-slate-700 text-white font-bold text-xs rounded-lg shadow-2xl whitespace-nowrap z-50 pointer-events-none flex items-center gap-1.5 animate-in fade-in zoom-in-95 duration-150">
-                      <span>{item.name}</span>
+                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1.5 bg-white border border-slate-300 text-slate-900 font-bold text-xs rounded-lg shadow-2xl whitespace-nowrap z-50 pointer-events-none flex items-center gap-1.5 animate-in fade-in zoom-in-95 duration-150">
+                      <span className="text-slate-900 font-bold">{item.name}</span>
                       {isActive && <span className="h-1.5 w-1.5 rounded-full bg-[#F68B2D]" />}
                     </div>
                   )}

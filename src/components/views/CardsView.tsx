@@ -51,15 +51,18 @@ const getCardTypeIcon = (cardType?: string) => {
       )
     };
   }
-  // Default: Visa-style blue badge
+  // Default: Authentic Visa brand SVG badge
   return {
     label: 'Visa',
     render: () => (
       <div
-        className="flex items-center justify-center w-14 h-7 rounded-md bg-[#1A1F71] shadow-xs"
+        className="flex items-center justify-center px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xs h-7"
         title="Visa"
       >
-        <span className="font-black text-white text-[12px] tracking-wider" style={{ fontStyle: 'italic', fontFamily: 'Arial Black, sans-serif' }}>VISA</span>
+        <svg className="h-3.5 w-auto" viewBox="0 0 36 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13.882 0.222L9.08 11.778H6.177L3.738 2.502C3.593 1.935 3.447 1.734 3.013 1.493C2.289 1.1 1.071 0.724 0 0.222H0.076L0.231 0.222H5.068C5.72 0.222 6.27 0.656 6.415 1.397L7.66 8.026L10.741 0.222H13.882ZM25.792 8.375C25.807 5.178 21.36 4.995 21.39 3.567C21.405 3.125 21.834 2.651 22.763 2.53C23.222 2.47 24.508 2.424 25.961 3.097L26.53 0.457C25.748 0.176 24.743 0 23.491 0C20.597 0 18.557 1.542 18.542 3.734C18.511 5.368 19.99 6.284 21.102 6.833C22.244 7.397 22.626 7.748 22.611 8.252C22.596 9.029 21.66 9.38 20.793 9.396C19.339 9.426 18.495 9.014 17.82 8.709L17.237 11.442C18.049 11.808 19.55 12 21.117 12C24.208 12 26.233 10.458 25.792 8.375ZM33.376 11.778H36.126L33.722 0.222H31.21C30.597 0.222 30.082 0.574 29.851 1.123L25.5 11.778H28.608L29.23 10.053H33.023L33.376 11.778ZM30.076 7.69L31.626 3.414L32.516 7.69H30.076ZM18.236 0.222L15.797 11.778H12.834L15.273 0.222H18.236Z" fill="#1434CB"/>
+          <path d="M5.068 0.222H0.231L0.076 0.222L0 0.222H0.222C1.293 0.946 2.511 1.322 3.235 1.715C3.669 1.956 3.815 2.157 3.96 2.724L6.4 12H9.303L14.105 0.444H10.964L7.883 8.248L6.638 1.619C6.493 0.878 5.943 0.444 5.291 0.444H5.068V0.222Z" fill="#FAA61A"/>
+        </svg>
       </div>
     )
   };

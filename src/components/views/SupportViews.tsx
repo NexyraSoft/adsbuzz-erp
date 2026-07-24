@@ -2745,12 +2745,12 @@ export function InsightsView({ invoices, adAccounts, vendors, cards = [], series
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6" id="channel-analytics-panel">
         {/* Channel Wise Payment Received */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="bg-navy-header card-header-title text-white px-4 py-2.5 text-center font-extrabold text-xs uppercase tracking-wider" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>
+          <div className="bg-navy-header card-header-title text-white px-4 py-2.5 text-center font-extrabold text-xs uppercase tracking-wider" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>
             Channel Wise Payment Received
           </div>
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>
+              <tr className="bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>
                 <th className="border border-slate-300 dark:border-slate-700 px-2 py-1.5 text-[11px] font-bold text-left text-white" style={{ color: '#ffffff' }}>Name</th>
                 <th className="border border-slate-300 dark:border-slate-700 px-2 py-1.5 text-[11px] font-bold text-right text-white" style={{ color: '#ffffff' }}>QTY</th>
                 <th className="border border-slate-300 dark:border-slate-700 px-2 py-1.5 text-[11px] font-bold text-right text-white" style={{ color: '#ffffff' }}>Amount</th>
@@ -2786,9 +2786,9 @@ export function InsightsView({ invoices, adAccounts, vendors, cards = [], series
                       </tr>
                     ))}
                     <tr>
-                      <td className="border border-slate-300 dark:border-slate-700 px-2 py-1 text-[11px] font-extrabold bg-navy-header text-left text-white" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>TOTAL</td>
-                      <td className="border border-slate-300 dark:border-slate-700 px-2 py-1 text-[11px] font-extrabold text-right bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>{totalQty}</td>
-                      <td className="border border-slate-300 dark:border-slate-700 px-2 py-1 text-[11px] font-extrabold text-right bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>৳{totalAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                      <td className="border border-slate-300 dark:border-slate-700 px-2 py-1 text-[11px] font-extrabold bg-navy-header text-left text-white" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>TOTAL</td>
+                      <td className="border border-slate-300 dark:border-slate-700 px-2 py-1 text-[11px] font-extrabold text-right bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>{totalQty}</td>
+                      <td className="border border-slate-300 dark:border-slate-700 px-2 py-1 text-[11px] font-extrabold text-right bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>৳{totalAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                     </tr>
                   </>
                 );
@@ -2799,7 +2799,7 @@ export function InsightsView({ invoices, adAccounts, vendors, cards = [], series
 
         {/* Total Sale + Daily Breakdown */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="bg-navy-header card-header-title text-white px-4 py-2.5 text-center font-extrabold text-xs uppercase tracking-wider" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>
+          <div className="bg-navy-header card-header-title text-white px-4 py-2.5 text-center font-extrabold text-xs uppercase tracking-wider" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>
             Total Sale (Daily Breakdown)
           </div>
           {(() => {
@@ -2818,12 +2818,12 @@ export function InsightsView({ invoices, adAccounts, vendors, cards = [], series
             return (
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>
+                  <tr className="bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>
                     <td colSpan={3} className="border border-slate-300 dark:border-slate-700 px-2 py-1.5 text-[12px] font-extrabold text-center text-white" style={{ color: '#ffffff' }}>
                       Total Sale &nbsp;&nbsp; ${totalUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} &nbsp;&nbsp; ৳{totalBDT.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
                   </tr>
-                  <tr className="bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>
+                  <tr className="bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>
                     <th className="border border-slate-300 dark:border-slate-700 px-2 py-1.5 text-[11px] font-bold text-left text-white" style={{ color: '#ffffff' }}>Date</th>
                     <th className="border border-slate-300 dark:border-slate-700 px-2 py-1.5 text-[11px] font-bold text-right text-white" style={{ color: '#ffffff' }}>Total Amount USD</th>
                     <th className="border border-slate-300 dark:border-slate-700 px-2 py-1.5 text-[11px] font-bold text-right text-white" style={{ color: '#ffffff' }}>Total Amount BDT</th>
@@ -2851,12 +2851,12 @@ export function InsightsView({ invoices, adAccounts, vendors, cards = [], series
 
         {/* Channel Wise Vendor Payment (Paid) */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="bg-navy-header card-header-title text-white px-4 py-2.5 text-center font-extrabold text-xs uppercase tracking-wider" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>
+          <div className="bg-navy-header card-header-title text-white px-4 py-2.5 text-center font-extrabold text-xs uppercase tracking-wider" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>
             Channel Wise Vendor Payment (Paid)
           </div>
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>
+              <tr className="bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>
                 <th className="border border-slate-300 dark:border-slate-700 px-2 py-1.5 text-[11px] font-bold text-left text-white" style={{ color: '#ffffff' }}>Name</th>
                 <th className="border border-slate-300 dark:border-slate-700 px-2 py-1.5 text-[11px] font-bold text-right text-white" style={{ color: '#ffffff' }}>QTY</th>
                 <th className="border border-slate-300 dark:border-slate-700 px-2 py-1.5 text-[11px] font-bold text-right text-white" style={{ color: '#ffffff' }}>Amount</th>
@@ -2892,9 +2892,9 @@ export function InsightsView({ invoices, adAccounts, vendors, cards = [], series
                       </tr>
                     ))}
                     <tr>
-                      <td className="border border-slate-300 dark:border-slate-700 px-2 py-1 text-[11px] font-extrabold bg-navy-header text-left text-white" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>Total</td>
-                      <td className="border border-slate-300 dark:border-slate-700 px-2 py-1 text-[11px] font-extrabold text-right bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>{totalQty}</td>
-                      <td className="border border-slate-300 dark:border-slate-700 px-2 py-1 text-[11px] font-extrabold text-right bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>৳{totalAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                      <td className="border border-slate-300 dark:border-slate-700 px-2 py-1 text-[11px] font-extrabold bg-navy-header text-left text-white" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>Total</td>
+                      <td className="border border-slate-300 dark:border-slate-700 px-2 py-1 text-[11px] font-extrabold text-right bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>{totalQty}</td>
+                      <td className="border border-slate-300 dark:border-slate-700 px-2 py-1 text-[11px] font-extrabold text-right bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>৳{totalAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                     </tr>
                   </>
                 );
@@ -2905,12 +2905,12 @@ export function InsightsView({ invoices, adAccounts, vendors, cards = [], series
 
         {/* Payment Approval Status + Payment Status */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="bg-navy-header card-header-title text-white px-4 py-2.5 text-center font-extrabold text-xs uppercase tracking-wider" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>
+          <div className="bg-navy-header card-header-title text-white px-4 py-2.5 text-center font-extrabold text-xs uppercase tracking-wider" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>
             Approval &amp; Payment Status
           </div>
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>
+              <tr className="bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>
                 <th colSpan={2} className="border border-slate-300 dark:border-slate-700 px-2 py-1.5 text-[11px] font-bold text-center text-white" style={{ color: '#ffffff' }}>Payment Approval Status</th>
               </tr>
             </thead>
@@ -2932,7 +2932,7 @@ export function InsightsView({ invoices, adAccounts, vendors, cards = [], series
 
           <table className="w-full border-collapse mt-3">
             <thead>
-              <tr className="bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#1F3A5F' }}>
+              <tr className="bg-navy-header text-white" style={{ color: '#ffffff', backgroundColor: '#154A7D' }}>
                 <th colSpan={2} className="border border-slate-300 dark:border-slate-700 px-2 py-1.5 text-[11px] font-bold text-center text-white" style={{ color: '#ffffff' }}>Payment Status</th>
               </tr>
             </thead>
