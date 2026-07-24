@@ -1225,9 +1225,10 @@ export function SeriesView({ series, adAccounts, onAddSeries, onUpdateSeries }: 
                   <tr 
                     key={idx} 
                     onClick={() => setSelectedSeriesId(s.seriesId)}
+                    style={{ borderLeft: activeSeries?.seriesId === s.seriesId ? '5px solid #154A7D' : '5px solid transparent' }}
                     className={`cursor-pointer transition-colors ${
                       activeSeries?.seriesId === s.seriesId 
-                        ? 'bg-blue-50/70 dark:bg-slate-800/60 border-l-4 border-[#1F5E98]' 
+                        ? 'font-bold' 
                         : 'hover:bg-slate-50 dark:hover:bg-slate-800/30'
                     }`}
                   >
@@ -1564,10 +1565,11 @@ export function VendorsView({ vendors, onAddVendor, onUpdateVendor }: VendorsVie
                 key={v.id}
                 id={`vendor-item-${v.id}`}
                 onClick={() => setSelectedVendorId(v.id)}
-                className={`p-4 flex items-center justify-between cursor-pointer transition-colors border-l-[6px] ${
+                style={{ borderLeft: activeVendor?.id === v.id ? '5px solid #154A7D' : '5px solid transparent' }}
+                className={`p-4 flex items-center justify-between cursor-pointer transition-colors ${
                   activeVendor?.id === v.id
-                    ? '!border-l-[#1F5E98] bg-white dark:bg-slate-900'
-                    : '!border-l-transparent hover:bg-slate-50 dark:hover:bg-slate-800/30'
+                    ? 'font-bold'
+                    : 'hover:bg-slate-50 dark:hover:bg-slate-800/30'
                 }`}
               >
                 <div>
@@ -3030,10 +3032,11 @@ export function InsightsView({ invoices, adAccounts, vendors, cards = [], series
                       <button
                         key={acc.adAccountId}
                         onClick={() => setActiveSelectedAccId(acc.adAccountId)}
+                        style={{ borderLeft: isActive ? '5px solid #154A7D' : '5px solid transparent' }}
                         className={`w-full text-left p-3 flex flex-col gap-1 transition-all cursor-pointer ${
                           isActive
-                            ? 'bg-[#F0F7FF] dark:bg-slate-800/90 border-l-4 border-[#1F5E98] dark:border-[#38BDF8]'
-                            : 'hover:bg-[#F7FBFF] dark:hover:bg-slate-800/50'
+                            ? 'font-bold'
+                            : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
                         }`}
                       >
                         <div className="flex justify-between items-start gap-2 w-full">
