@@ -9,7 +9,6 @@ import { Search, Bell, Sun, Moon, Keyboard, LogOut, ChevronDown, User, ShieldAle
 import { Customer, AdAccount } from '../types';
 import logo from '../assets/images/logo.svg';
 import logoBlue from '../assets/images/logo_blue.svg';
-import logoWhite from '../assets/images/logo_white.svg';
 
 interface HeaderProps {
   onSearch: (query: string) => void;
@@ -72,7 +71,7 @@ export default function Header({
   };
 
   return (
-    <header className="bg-[#131926] md:bg-white dark:md:bg-slate-900 border-b border-slate-800 md:border-slate-200/80 dark:md:border-slate-800/80 min-h-[72px] py-3.5 md:py-4 px-4 md:px-6 flex items-center justify-between sticky top-0 z-30 shadow-sm shadow-slate-100/30 md:shadow-sm md:shadow-slate-100/30 dark:md:shadow-none">
+    <header className="bg-[#131926] xl:bg-white dark:xl:bg-slate-900 border-b border-slate-800 xl:border-slate-200/80 dark:xl:border-slate-800/80 min-h-[72px] py-3.5 md:py-4 px-4 md:px-6 flex items-center justify-between sticky top-0 z-30 shadow-sm shadow-slate-100/30 dark:shadow-none">
       
       {/* Mobile Menu Toggle & Brand Indicator */}
       <div className="flex items-center gap-2.5 md:hidden">
@@ -85,9 +84,15 @@ export default function Header({
         </button>
         <div className="flex items-center gap-2">
           <img
-            src={logoWhite}
+            src={logoBlue}
             alt="AdsBuzz Logo"
-            className="h-[30px] object-contain"
+            className="h-[30px] object-contain hidden md:dark:hidden"
+            referrerPolicy="no-referrer"
+          />
+          <img
+            src={logo}
+            alt="AdsBuzz Logo"
+            className="h-[30px] object-contain md:hidden dark:md:block"
             referrerPolicy="no-referrer"
           />
         </div>
@@ -166,7 +171,7 @@ export default function Header({
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="header-icon-action p-2 text-slate-300 md:text-slate-500 md:dark:text-slate-400 hover:text-white md:hover:text-slate-800 md:dark:hover:text-slate-200 hover:bg-slate-800/60 md:hover:bg-slate-50 md:dark:hover:bg-slate-800 rounded-lg cursor-pointer relative transition-colors"
+            className="header-icon-action p-2 text-slate-300 md:text-slate-500 dark:md:text-slate-400 rounded-lg cursor-pointer relative"
             aria-label="Show notifications"
           >
             <Bell size={16} />
@@ -226,7 +231,7 @@ export default function Header({
             id="user-profile-btn"
             aria-label="Open profile menu"
           >
-            <div className="header-profile-avatar h-8 w-8 rounded-full bg-slate-700 md:bg-slate-100 dark:md:bg-slate-800 text-slate-200 md:text-slate-700 dark:md:text-slate-300 font-bold text-xs flex items-center justify-center border border-slate-600 md:border-slate-200 dark:md:border-slate-700">
+            <div className="header-profile-avatar h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800 md:bg-slate-100 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center justify-center border border-slate-200 dark:border-slate-700">
               RR
             </div>
             <ChevronDown size={14} className="header-profile-chevron text-slate-300 md:text-slate-400" />
