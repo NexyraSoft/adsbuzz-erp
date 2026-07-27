@@ -491,7 +491,7 @@ function InsightsView({ invoices, adAccounts, vendors, cards = [], series = [], 
       </div>
 
       {/* Channel & Daily Analytics */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6" id="channel-analytics-panel">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start" id="channel-analytics-panel">
         {/* Channel Wise Payment Received */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/70 dark:border-slate-800 shadow-sm overflow-hidden ring-1 ring-slate-900/[0.02]">
           <div className="insight-card-header bg-gradient-to-r from-brand-blue-deep to-brand-blue text-white px-4 py-3 font-extrabold text-xs uppercase tracking-[0.12em] flex items-center justify-between">
