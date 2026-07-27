@@ -9,6 +9,39 @@
   --font-sans: "Helvetica Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-display: "Helvetica Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-mono: "Helvetica Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* Brand: Blue (3 shades used as primary text + interactive surfaces) */
+  --color-brand-blue-deep: #0c4275;     /* text on light surfaces, primary heading/body */
+  --color-brand-blue: #1F5E98;          /* mid blue, primary interactive surface */
+  --color-brand-blue-dark: #154A7D;     /* dark blue, table header + sidebar accents */
+
+  /* Brand: Orange (primary action color + its hover) */
+  --color-brand-orange: #F68B2D;        /* primary action / accent */
+  --color-brand-orange-dark: #e07920;   /* primary action hover */
+
+  /* Status text (deep green used for "paid/active" text on light surfaces) */
+  --color-status-green-deep: #0a5c3a;
+
+  /* Surface tints (light pastel backgrounds for stat cards and panels) */
+  --color-surface: #FCFEFF;             /* generic near-white surface */
+  --color-surface-blue: #F0F7FF;        /* blue stat/panel surface */
+  --color-surface-blue-light: #F7FBFF;  /* lighter blue surface (reports) */
+  --color-surface-green: #F1FBF5;       /* green stat/panel surface */
+  --color-surface-orange: #FFF7ED;      /* orange stat/panel surface */
+  --color-surface-rose: #FFF1F2;        /* rose stat/panel surface */
+
+  /* Border tints (match surface tints for stat card outlines) */
+  --color-border-blue: #CFE1F5;         /* blue surface border */
+  --color-border-blue-light: #D8E6F3;   /* lighter blue surface border */
+  --color-border-green: #CFEBDD;        /* green surface border */
+  --color-border-orange: #FBD9B9;       /* orange surface border */
+  --color-border-rose: #F8D6DC;         /* rose surface border */
+
+  /* App-level background */
+  --color-app-bg: #F8F5F0;              /* main app canvas */
+
+  /* Sidebar/nav dark navy (used for the dark theme container) */
+  --color-sidebar-navy: #131926;
 }
 
 /* ==========================================
@@ -390,12 +423,12 @@ button.bg-\[\#1F5F98\] *,
 }
 
 #series-registry-card thead {
-  background-color: #1F5F98 !important;
+  background-color: #CFE1F5 !important;
 }
 
 #series-registry-card thead th {
-  color: #ffffff !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #0c4275 !important;
+  border-bottom: 1px solid rgba(12, 66, 117, 0.1) !important;
 }
 
 #series-registry-card tbody td {
@@ -930,21 +963,21 @@ table tbody tr:hover .text-\[\#1F5E98\] {
    12.4 Table Header & Column Name Hover Styles
    ========================================== */
 table thead {
-  background-color: #1F5F98 !important;
+  background-color: #CFE1F5 !important; /* Light brand-blue surface border token */
 }
 
 table thead th,
 table thead th * {
-  color: #ffffff !important;
-  background-color: #1F5F98 !important;
+  color: #0c4275 !important; /* Brand-blue-deep for high-contrast readable text */
+  background-color: #CFE1F5 !important;
   font-weight: 700 !important;
   transition: color 0.15s ease, background-color 0.15s ease !important;
 }
 
 table thead th:hover,
 table thead th:hover * {
-  color: #F68B2D !important; /* Brand orange accent on column name hover */
-  background-color: #154A7C !important;
+  color: #154A7D !important; /* Brand-blue-dark on hover */
+  background-color: #B8D2EE !important; /* Slightly darker blue on hover */
 }
 
 /* ==========================================
@@ -1053,27 +1086,104 @@ svg path {
   color: #0c4275 !important;
 }
 
+/* 14.0 Brand-colored badges must keep their inline color over the global blue text rule */
+#main-content-pane #sales-records-total-badge,
+#main-content-pane #sales-records-total-badge *,
+#main-content-pane #sales-records-total-badge span {
+  color: #ffffff !important;
+}
+
+#main-content-pane #sales-records-total-badge > span {
+  color: #F68B2D !important;
+  background-color: #ffffff !important;
+}
+
+/* 14.0c Insights card gradient headers: keep white text over colored gradient backgrounds */
+#main-content-pane .insight-card-header,
+#main-content-pane .insight-card-header * {
+  color: #ffffff !important;
+}
+
+/* 14.0d Insights ledger entries badge: orange pill with white text */
+#main-content-pane .insight-entries-badge,
+#main-content-pane .insight-entries-badge * {
+  background-color: #F68B2D !important;
+  color: #ffffff !important;
+}
+#main-content-pane .insight-qty-chip {
+  background-color: #f1f5f9 !important;
+  color: #0c4275 !important;
+}
+
+.dark #main-content-pane .insight-qty-chip {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+#main-content-pane .insight-paid-qty-chip {
+  background-color: #ecfdf5 !important;
+  color: #047857 !important;
+}
+
+.dark #main-content-pane .insight-paid-qty-chip {
+  background-color: rgba(6, 78, 59, 0.4) !important;
+  color: #6ee7b7 !important;
+}
+
+#main-content-pane .insight-status-chip {
+  background-color: #ffffff !important;
+  color: #0c4275 !important;
+  border-color: rgba(12, 66, 117, 0.18) !important;
+}
+
+#main-content-pane .insight-status-chip-paid {
+  background-color: #ecfdf5 !important;
+  color: #047857 !important;
+  border-color: rgba(4, 120, 87, 0.25) !important;
+}
+
+#main-content-pane .insight-status-chip-amber {
+  background-color: #fffbeb !important;
+  color: #b45309 !important;
+  border-color: rgba(180, 83, 9, 0.25) !important;
+}
+
+#main-content-pane .insight-status-chip-rose {
+  background-color: #fff1f2 !important;
+  color: #be123c !important;
+  border-color: rgba(190, 18, 60, 0.25) !important;
+}
+#main-content-pane #checkout-steps-indicator button > div.h-6.w-6.rounded-full,
+#main-content-pane #checkout-steps-indicator button > div.h-6.w-6.rounded-full * {
+  color: #ffffff !important;
+}
+
+#main-content-pane #checkout-steps-indicator button > div.h-6.w-6.rounded-full.bg-slate-100,
+#main-content-pane #checkout-steps-indicator button > div.h-6.w-6.rounded-full.dark\:bg-slate-800 {
+  color: #64748b !important;
+}
+
 /* 14.1 Readable table headers outside the sidebar */
 #main-content-pane table thead,
 #main-content-pane table thead tr,
 #main-content-pane table thead th {
-  background-color: #154A7D !important;
-  color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.18) !important;
+  background-color: #CFE1F5 !important;
+  color: #0c4275 !important;
+  border-color: rgba(12, 66, 117, 0.18) !important;
 }
 
 #main-content-pane table thead th *,
 #main-content-pane table thead th span,
 #main-content-pane table thead th label,
 #main-content-pane table thead th svg {
-  color: #ffffff !important;
-  stroke: #ffffff !important;
+  color: #0c4275 !important;
+  stroke: #0c4275 !important;
 }
 
 #main-content-pane table thead th:hover,
 #main-content-pane table thead th:hover * {
-  background-color: #0c4275 !important;
-  color: #FFF7ED !important;
+  background-color: #B8D2EE !important;
+  color: #154A7D !important;
 }
 
 /* 14.2 Danger account statuses must stay red over global blue text */
@@ -1199,21 +1309,14 @@ svg path {
 /* ==========================================
    16. Scale-Only Button Hover Outside Sidebar
    ========================================== */
+/* Tailwind's native hover: variants handle color/background/border changes.
+   This rule only adds the scale animation on hover, applied to all main-content buttons. */
 #main-content-pane button:not(:disabled):hover {
-  background-color: var(--button-hover-bg) !important;
-  border-color: var(--button-hover-border) !important;
-  box-shadow: var(--button-hover-shadow) !important;
-  color: var(--button-hover-color) !important;
-  opacity: var(--button-hover-opacity) !important;
-  transform: scale(1.045) !important;
-}
-
-#main-content-pane button:not(:disabled):hover * {
-  color: var(--button-child-hover-color, inherit) !important;
+  transform: scale(1.045);
 }
 
 #main-content-pane button:disabled:hover {
-  transform: none !important;
+  transform: none;
 }
 
 /* ==========================================

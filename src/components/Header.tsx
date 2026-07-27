@@ -71,7 +71,7 @@ export default function Header({
   };
 
   return (
-    <header className="bg-[#131926] xl:bg-white dark:xl:bg-slate-900 border-b border-slate-800 xl:border-slate-200/80 dark:xl:border-slate-800/80 min-h-[72px] py-3.5 md:py-4 px-4 md:px-6 flex items-center justify-between sticky top-0 z-30 shadow-sm shadow-slate-100/30 dark:shadow-none">
+    <header className="bg-sidebar-navy xl:bg-white dark:xl:bg-slate-900 border-b border-slate-800 xl:border-slate-200/80 dark:xl:border-slate-800/80 min-h-[72px] py-3.5 md:py-4 px-4 md:px-6 flex items-center justify-between sticky top-0 z-30 shadow-sm shadow-slate-100/30 dark:shadow-none">
       
       {/* Mobile Menu Toggle & Brand Indicator */}
       <div className="flex items-center gap-2.5 md:hidden">
@@ -109,7 +109,7 @@ export default function Header({
             onChange={(e) => handleGlobalSearchChange(e.target.value)}
             className="w-full text-xs pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white transition-all duration-200 font-medium placeholder-slate-400 dark:placeholder-slate-500"
           />
-          <Search className="absolute left-3.5 text-slate-400/80 dark:text-slate-500/80 group-focus-within:text-[#1F5F98] transition-colors duration-200" size={14} />
+          <Search className="absolute left-3.5 text-slate-400/80 dark:text-slate-500/80 group-focus-within:text-brand-blue transition-colors duration-200" size={14} />
         </div>
 
         {/* Floating suggestions panel */}
@@ -173,6 +173,8 @@ export default function Header({
             onClick={() => setShowNotifications(!showNotifications)}
             className="header-icon-action p-2 text-slate-300 md:text-slate-500 dark:md:text-slate-400 rounded-lg cursor-pointer relative"
             aria-label="Show notifications"
+            aria-haspopup="dialog"
+            aria-expanded={showNotifications}
           >
             <Bell size={16} />
             <span className="absolute top-1 right-1 h-1.5 w-1.5 bg-orange-500 rounded-full"></span>
@@ -192,6 +194,8 @@ export default function Header({
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  role="dialog"
+                  aria-label="Notifications"
                   className="absolute right-0 top-full mt-2 w-[240px] sm:w-72 md:w-80 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl p-4 z-50 text-xs text-slate-800 dark:text-slate-100"
                 >
                   <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
@@ -230,6 +234,8 @@ export default function Header({
             className="header-icon-action flex items-center gap-1.5 cursor-pointer rounded-lg"
             id="user-profile-btn"
             aria-label="Open profile menu"
+            aria-haspopup="menu"
+            aria-expanded={showProfileDropdown}
           >
             <div className="header-profile-avatar h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800 md:bg-slate-100 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center justify-center border border-slate-200 dark:border-slate-700">
               RR
@@ -243,6 +249,8 @@ export default function Header({
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 15 }}
+                role="menu"
+                aria-label="Profile menu"
                 className="absolute right-0 mt-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl w-56 p-2 z-40"
               >
                 <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800 mb-1">

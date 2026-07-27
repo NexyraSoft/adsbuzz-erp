@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { memo } from 'react';
 import { motion } from 'motion/react';
-import { 
-  TrendingUp, 
-  DollarSign, 
+import {
+  TrendingUp,
+  DollarSign,
   Clock, 
   Users, 
   ShieldCheck, 
@@ -32,11 +33,29 @@ import {
   Bar,
   PieChart,
   Pie,
-  Cell
+  Cell,
 } from 'recharts';
 import { Customer, AdAccount, Invoice, ActivityLog, Series, PlatformType } from '../../types';
 import { PlatformText } from '../PlatformText';
 import StatCard from '../StatCard';
+
+/** Subset of YAxisTickContentProps our custom tick actually reads. */
+interface CustomYAxisTickProps {
+  x?: number | string;
+  y?: number | string;
+  payload?: { value?: string | number };
+  index?: number;
+}
+
+/** Shape Recharts passes to a `<LabelList content={...} />` render function for bar charts. */
+interface CustomBarLabelProps {
+  x?: number | string;
+  y?: number | string;
+  width?: number | string;
+  height?: number | string;
+  value: number;
+  index?: number;
+}
 
 const ACCOUNT_COLORS = [
   '#2563EB', // Blue
@@ -51,7 +70,7 @@ const ACCOUNT_COLORS = [
   '#0D9488'  // Teal
 ];
 
-const CustomYAxisTick = (props: any) => {
+const CustomYAxisTick = (props: CustomYAxisTickProps) => {
   const { x, y, payload, index } = props;
   const color = ACCOUNT_COLORS[index % ACCOUNT_COLORS.length] || '#000000';
   return (
@@ -70,15 +89,19 @@ const CustomYAxisTick = (props: any) => {
   );
 };
 
-const CustomBarLabel = (props: any) => {
+const CustomBarLabel = (props: Partial<CustomBarLabelProps>) => {
   const { x, y, width, height, value, index } = props;
-  if (value <= 0) return null;
-  const color = ACCOUNT_COLORS[index % ACCOUNT_COLORS.length] || '#000000';
+  if (value === undefined || value <= 0) return null;
+  const color = ACCOUNT_COLORS[(index ?? 0) % ACCOUNT_COLORS.length] || '#000000';
+  const numX = Number(x) || 0;
+  const numY = Number(y) || 0;
+  const numW = Number(width) || 0;
+  const numH = Number(height) || 0;
   return (
     <g>
       <text
-        x={x + width + 6}
-        y={y + (height / 2) + 4}
+        x={numX + numW + 6}
+        y={numY + numH / 2 + 4}
         fill={color}
         className="font-sans"
         style={{ fontSize: '10px', fontWeight: '400' }}
@@ -117,7 +140,7 @@ const PLATFORM_COLORS = {
   Snapchat: '#F59E0B'
 };
 
-export default function DashboardView({
+function DashboardView({
   stats,
   invoices,
   customers,
@@ -353,7 +376,7 @@ export default function DashboardView({
           <button 
             id="qa-new-sale"
             onClick={() => onQuickAction('new-sale')}
-            className="flex items-center gap-1.5 bg-[#F68B2D] hover:bg-[#e07920] active:scale-95 transition-all text-white font-semibold text-[11px] tracking-wide px-3.5 py-2 rounded-xl shadow-sm cursor-pointer"
+            className="flex items-center gap-1.5 bg-brand-orange hover:bg-brand-orange-dark active:scale-95 transition-all text-white font-semibold text-[11px] tracking-wide px-3.5 py-2 rounded-xl shadow-sm cursor-pointer"
           >
             <PlusCircle size={13} /> New Sale Entry
           </button>
@@ -480,7 +503,7 @@ export default function DashboardView({
       {/* TOP 10 AD ACCOUNT Section */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col" id="top-10-ad-accounts-container">
         {/* Banner header: bold, orange, centered */}
-        <div className="bg-[#F68B2D] text-white py-2.5 px-6 text-center text-sm md:text-base font-black tracking-wider border-b-2 border-orange-600 uppercase">
+        <div className="bg-brand-orange text-white py-2.5 px-6 text-center text-sm md:text-base font-black tracking-wider border-b-2 border-orange-600 uppercase">
           TOP 10 AD ACCOUNT
         </div>
         
@@ -492,9 +515,9 @@ export default function DashboardView({
             <table className="w-full text-left text-xs border-collapse border border-slate-300 dark:border-slate-700 font-sans">
               <thead>
                 <tr className="border-b border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-800/50">
-                  <th className="p-2 border border-slate-300 dark:border-slate-700 font-extrabold text-xs">Ad Account Name</th>
-                  <th className="p-2 border border-slate-300 dark:border-slate-700 font-extrabold text-xs">sum TopUp Amoun</th>
-                  <th className="p-2 border border-slate-300 dark:border-slate-700 font-extrabold text-xs">Product Type</th>
+                  <th scope="col" className="p-2 border border-slate-300 dark:border-slate-700 font-extrabold text-xs">Ad Account Name</th>
+                  <th scope="col" className="p-2 border border-slate-300 dark:border-slate-700 font-extrabold text-xs">sum TopUp Amoun</th>
+                  <th scope="col" className="p-2 border border-slate-300 dark:border-slate-700 font-extrabold text-xs">Product Type</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-300 dark:divide-slate-700">
@@ -509,7 +532,7 @@ export default function DashboardView({
                           onNavigate('insights');
                         }
                       }}
-                      className={`h-[34px] ${hasData ? 'hover:bg-[#F68B2D]/5 dark:hover:bg-[#F68B2D]/10 cursor-pointer transition-colors' : ''}`}
+                      className={`h-[34px] ${hasData ? 'hover:bg-brand-orange/5 dark:hover:bg-brand-orange/10 cursor-pointer transition-colors' : ''}`}
                     >
                       <td className="p-2 border border-slate-300 dark:border-slate-700 font-normal text-slate-850 dark:text-slate-100 whitespace-normal break-words">
                         <div className="flex items-center gap-2">
@@ -665,13 +688,13 @@ export default function DashboardView({
           </div>
           <div className="w-full rounded-lg border border-slate-200 dark:border-slate-800 shadow-2xs overflow-hidden">
             <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400 border-collapse table-fixed" id="dashboard-recent-sales">
-              <thead className="bg-[#1F5E98] text-white">
+              <thead className="bg-brand-blue text-white">
                 <tr>
-                  <th className="py-2 px-1.5 sm:px-2.5 font-bold tracking-tight text-[10px] sm:text-xs w-[22%]">Invoice No</th>
-                  <th className="py-2 px-1.5 sm:px-2.5 font-bold tracking-tight text-[10px] sm:text-xs w-[36%]">Account / Platform</th>
-                  <th className="py-2 px-1 sm:px-2 text-right font-bold tracking-tight text-[10px] sm:text-xs w-[14%]">USD Amount</th>
-                  <th className="py-2 px-1 sm:px-2 text-right font-bold tracking-tight text-[10px] sm:text-xs w-[14%]">BDT Paid</th>
-                  <th className="py-2 px-1 sm:px-2 text-center font-bold tracking-tight text-[10px] sm:text-xs w-[14%]">Status</th>
+                  <th scope="col" className="py-2 px-1.5 sm:px-2.5 font-bold tracking-tight text-[10px] sm:text-xs w-[22%]">Invoice No</th>
+                  <th scope="col" className="py-2 px-1.5 sm:px-2.5 font-bold tracking-tight text-[10px] sm:text-xs w-[36%]">Account / Platform</th>
+                  <th scope="col" className="py-2 px-1 sm:px-2 text-right font-bold tracking-tight text-[10px] sm:text-xs w-[14%]">USD Amount</th>
+                  <th scope="col" className="py-2 px-1 sm:px-2 text-right font-bold tracking-tight text-[10px] sm:text-xs w-[14%]">BDT Paid</th>
+                  <th scope="col" className="py-2 px-1 sm:px-2 text-center font-bold tracking-tight text-[10px] sm:text-xs w-[14%]">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
@@ -727,10 +750,10 @@ export default function DashboardView({
                 
                 if (act.type === 'sale') {
                   borderTheme = 'border-orange-100 dark:border-orange-950/20';
-                  indicatorColor = 'bg-[#F68B2D]';
+                  indicatorColor = 'bg-brand-orange';
                 } else if (act.type === 'account') {
                   borderTheme = 'border-blue-100 dark:border-blue-950/20';
-                  indicatorColor = 'bg-[#1F5F98]';
+                  indicatorColor = 'bg-brand-blue';
                 } else if (act.type === 'payment') {
                   borderTheme = 'border-emerald-100 dark:border-emerald-950/20';
                   indicatorColor = 'bg-emerald-500';
@@ -770,7 +793,7 @@ export default function DashboardView({
           </div>
           <button 
             onClick={() => onNavigate('customers')}
-            className="text-xs font-semibold text-[#F68B2D] hover:text-[#d4731d] flex items-center gap-1 cursor-pointer"
+            className="text-xs font-semibold text-brand-orange hover:text-[#d4731d] flex items-center gap-1 cursor-pointer"
           >
             Manage Accounts <ArrowUpRight size={14} />
           </button>
@@ -808,3 +831,5 @@ export default function DashboardView({
     </div>
   );
 }
+
+export default memo(DashboardView);

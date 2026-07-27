@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { memo } from 'react';
 import { motion } from 'motion/react';
 import { Clock, ShieldCheck, AlertCircle, CheckCircle, XCircle, Search, DollarSign } from 'lucide-react';
 import { Invoice, Customer } from '../../types';
@@ -17,7 +18,7 @@ interface TopupsViewProps {
   onSyncTopupStatus: (invoiceNo: string) => void;
 }
 
-export default function TopupsView({
+function TopupsView({
   invoices,
   customers,
   onApproveInvoice,
@@ -94,14 +95,14 @@ export default function TopupsView({
             <table className="w-full text-left text-xs text-slate-600 dark:text-slate-400 min-w-[720px]" id="topups-table">
               <thead className="bg-slate-50 dark:bg-slate-950/20 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-100 dark:border-slate-800/80 uppercase text-[10px] tracking-wider">
                 <tr>
-                  <th className="py-2.5 px-3 whitespace-nowrap">Invoice ID</th>
-                  <th className="py-2.5 px-3 whitespace-nowrap">Customer / Brand</th>
-                  <th className="py-2.5 px-3 whitespace-nowrap">Ad Account / Platform</th>
-                  <th className="py-2.5 px-3 text-right whitespace-nowrap">Topup USD</th>
-                  <th className="py-2.5 px-3 text-right whitespace-nowrap">Paid BDT / Channel</th>
-                  <th className="py-2.5 px-3 text-center whitespace-nowrap">Payment Audit</th>
-                  <th className="py-2.5 px-3 text-center whitespace-nowrap">Topup API</th>
-                  <th className="py-2.5 px-3 text-center whitespace-nowrap">Decisions</th>
+                  <th scope="col" className="py-2.5 px-3 whitespace-nowrap">Invoice ID</th>
+                  <th scope="col" className="py-2.5 px-3 whitespace-nowrap">Customer / Brand</th>
+                  <th scope="col" className="py-2.5 px-3 whitespace-nowrap">Ad Account / Platform</th>
+                  <th scope="col" className="py-2.5 px-3 text-right whitespace-nowrap">Topup USD</th>
+                  <th scope="col" className="py-2.5 px-3 text-right whitespace-nowrap">Paid BDT / Channel</th>
+                  <th scope="col" className="py-2.5 px-3 text-center whitespace-nowrap">Payment Audit</th>
+                  <th scope="col" className="py-2.5 px-3 text-center whitespace-nowrap">Topup API</th>
+                  <th scope="col" className="py-2.5 px-3 text-center whitespace-nowrap">Decisions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/30 text-[11px]">
@@ -181,3 +182,5 @@ export default function TopupsView({
     </div>
   );
 }
+
+export default memo(TopupsView);

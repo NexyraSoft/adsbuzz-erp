@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import ToastContainer, { ToastMessage } from './components/Toast';
@@ -13,27 +13,34 @@ import SalesView from './components/views/SalesView';
 import AdAccountsView from './components/views/AdAccountsView';
 import CardsView from './components/views/CardsView';
 import TopupsView from './components/views/TopupsView';
-import { 
-  InvoicesView, 
-  SaleSetupView, 
-  SeriesView, 
-  VendorsView, 
-  ReportsView, 
-  InsightsView, 
-  SettingsView 
-} from './components/views/SupportViews';
-import { 
-  INITIAL_SETTINGS, 
-  INITIAL_SERIES, 
-  INITIAL_CARDS, 
-  INITIAL_CUSTOMERS, 
-  INITIAL_AD_ACCOUNTS, 
-  INITIAL_INVOICES, 
-  INITIAL_VENDORS, 
-  INITIAL_SETUPS, 
-  INITIAL_ACTIVITIES 
+import InvoicesView from './components/views/InvoicesView';
+import SaleSetupView from './components/views/SaleSetupView';
+import SeriesView from './components/views/SeriesView';
+import VendorsView from './components/views/VendorsView';
+import ReportsView from './components/views/ReportsView';
+import InsightsView from './components/views/InsightsView';
+import SettingsView from './components/views/SettingsView';
+import {
+  INITIAL_SETTINGS,
+  INITIAL_SERIES,
+  INITIAL_CARDS,
+  INITIAL_CUSTOMERS,
+  INITIAL_AD_ACCOUNTS,
+  INITIAL_INVOICES,
+  INITIAL_VENDORS,
+  INITIAL_SETUPS,
+  INITIAL_ACTIVITIES,
 } from './data/seedData';
 import { Customer, AdAccount, Invoice, BillingCard, Vendor, Series, SaleSetup, ActivityLog, GlobalSettings } from './types';
+import { useCustomers } from './hooks/useCustomers';
+import { useAdAccounts } from './hooks/useAdAccounts';
+import { useInvoices } from './hooks/useInvoices';
+import { useCards } from './hooks/useCards';
+import { useVendors } from './hooks/useVendors';
+import { useSeries } from './hooks/useSeries';
+import { useSaleSetups } from './hooks/useSaleSetups';
+import { useSettings } from './hooks/useSettings';
+import { useActivities } from './hooks/useActivities';
 
 export default function App() {
   // Navigation & Theme States
@@ -43,23 +50,10 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  // Primary Database States (React State Engine)
-  const [selectedInsightsAccountId, setSelectedInsightsAccountId] = useState<string>('');
-  const [settings, setSettings] = useState<GlobalSettings>(INITIAL_SETTINGS);
-  const [series, setSeries] = useState<Series[]>(INITIAL_SERIES);
-  const [cards, setCards] = useState<BillingCard[]>(INITIAL_CARDS);
-  const [customers, setCustomers] = useState<Customer[]>(INITIAL_CUSTOMERS);
-  const [adAccounts, setAdAccounts] = useState<AdAccount[]>(INITIAL_AD_ACCOUNTS);
-  const [invoices, setInvoices] = useState<Invoice[]>(INITIAL_INVOICES);
-  const [vendors, setVendors] = useState<Vendor[]>(INITIAL_VENDORS);
-  const [setups, setSetups] = useState<SaleSetup[]>(INITIAL_SETUPS);
-  const [activities, setActivities] = useState<ActivityLog[]>(INITIAL_ACTIVITIES);
-
-  // Trigger Toast Notification
+  // Toast helpers (declared early so domain hooks below can reference them)
   const triggerToast = (type: ToastMessage['type'], title: string, description?: string) => {
     const id = Date.now().toString();
     setToasts(prev => [...prev, { id, type, title, description }]);
-    // Auto-remove after 4 seconds
     setTimeout(() => {
       removeToast(id);
     }, 4000);
@@ -68,6 +62,56 @@ export default function App() {
   const removeToast = (id: string) => {
     setToasts(prev => prev.filter(t => t.id !== id));
   };
+
+  // Primary Database States — one domain hook per slice
+  const [selectedInsightsAccountId, setSelectedInsightsAccountId] = useState<string>('');
+
+  const {
+    customers,
+    addCustomer,
+    updateCustomer: handleUpdateCustomer,
+    updateCustomerNotes: handleUpdateCustomerNotes,
+    toggleFavorite: handleToggleFavorite,
+    applySaleCredit,
+  } = useCustomers(triggerToast);
+
+  const {
+    adAccounts,
+    addAdAccount,
+    updateAdAccount: handleUpdateAdAccount,
+    updateAccountStatus: handleUpdateAccountStatus,
+    bulkUpdateStatus: handleBulkUpdateStatus,
+    markAccountSold,
+  } = useAdAccounts(triggerToast);
+
+  const {
+    invoices,
+    addInvoice,
+    updateInvoice: handleUpdateInvoice,
+    approveInvoice: handleApproveInvoice,
+    rejectInvoice: handleRejectInvoice,
+    syncTopupStatus: handleSyncTopupStatus,
+  } = useInvoices(triggerToast);
+
+  const { cards, addCard, updateCard, toggleCardStatus: handleToggleCardStatus, applyCardLoad } = useCards(triggerToast);
+  const { vendors, addVendor, updateVendor: handleUpdateVendor } = useVendors(triggerToast);
+  const { series, addSeries, updateSeries: handleUpdateSeries } = useSeries(triggerToast);
+  const { setups, addSetup, updateSaleSetup: handleUpdateSaleSetup } = useSaleSetups(triggerToast);
+  const {
+    settings,
+    updateBaseRate: handleUpdateBaseRate,
+    addPaymentMethod: handleAddPaymentMethod,
+    deletePaymentMethod: handleDeletePaymentMethod,
+  } = useSettings(triggerToast);
+  const { activities, addActivity } = useActivities();
+
+  // Cross-view "auto-open" intent flags. Set before switching views so the
+  // target child opens its modal / focuses its selection on mount.
+  const [pendingOpenAddCustomer, setPendingOpenAddCustomer] = useState(false);
+  const [pendingOpenAddAccount, setPendingOpenAddAccount] = useState(false);
+  const [pendingInitialCheckoutStep, setPendingInitialCheckoutStep] = useState<number | null>(null);
+  const [pendingInitialCustomerId, setPendingInitialCustomerId] = useState<string | null>(null);
+  const [pendingInitialSalesCustomerId, setPendingInitialSalesCustomerId] = useState<string | null>(null);
 
   // Keyboard Shortcuts Handler
   useEffect(() => {
@@ -101,56 +145,28 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [darkMode]);
 
+  // Clear pending "auto-open" intent flags after the target view mounts.
+  // Each child reads the prop once on mount, then we reset so a subsequent
+  // navigation doesn't replay the auto-open behavior.
   useEffect(() => {
-    const root = document.getElementById('main-content-pane');
-    if (!root) return;
-
-    let animationFrame = 0;
-    const syncButtonHoverStyles = () => {
-      const buttons = root.querySelectorAll<HTMLButtonElement>('button');
-
-      buttons.forEach((button) => {
-        if (button.matches(':hover')) return;
-
-        const style = window.getComputedStyle(button);
-        button.style.setProperty('--button-hover-bg', style.backgroundColor);
-        button.style.setProperty('--button-hover-color', style.color);
-        button.style.setProperty('--button-hover-border', style.borderColor);
-        button.style.setProperty('--button-hover-opacity', style.opacity);
-        button.style.setProperty('--button-hover-shadow', style.boxShadow);
-
-        button.querySelectorAll<HTMLElement>('*').forEach((child) => {
-          if (child.matches(':hover')) return;
-          child.style.setProperty('--button-child-hover-color', window.getComputedStyle(child).color);
-        });
-      });
-    };
-
-    const scheduleSync = () => {
-      cancelAnimationFrame(animationFrame);
-      animationFrame = requestAnimationFrame(syncButtonHoverStyles);
-    };
-
-    scheduleSync();
-
-    const observer = new MutationObserver(scheduleSync);
-    observer.observe(root, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['class', 'disabled', 'aria-expanded', 'data-state'],
-    });
-
-    root.addEventListener('pointerleave', scheduleSync, true);
-    window.addEventListener('resize', scheduleSync);
-
-    return () => {
-      cancelAnimationFrame(animationFrame);
-      observer.disconnect();
-      root.removeEventListener('pointerleave', scheduleSync, true);
-      window.removeEventListener('resize', scheduleSync);
-    };
-  }, []);
+    if (pendingOpenAddCustomer) setPendingOpenAddCustomer(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeView === 'customers']);
+  useEffect(() => {
+    if (pendingOpenAddAccount) setPendingOpenAddAccount(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeView === 'ad-accounts']);
+  useEffect(() => {
+    if (pendingInitialCheckoutStep !== null || pendingInitialSalesCustomerId !== null) {
+      setPendingInitialCheckoutStep(null);
+      setPendingInitialSalesCustomerId(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeView === 'sales']);
+  useEffect(() => {
+    if (pendingInitialCustomerId !== null) setPendingInitialCustomerId(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeView === 'customers']);
 
   const toggleTheme = () => {
     setDarkMode(!darkMode);
@@ -161,7 +177,43 @@ export default function App() {
   // BUSINESS WORKFLOW HANDLERS (ERP ACTIONS)
   // ----------------------------------------------------
 
-  // 1. Submit New Sale Transaction (Checkout)
+  // ----------------------------------------------------
+  // Cross-domain orchestration handlers.
+  //
+  // Pure-domain mutations now live in the per-slice hooks. These handlers
+  // remain here only because they fan out across multiple slices (sale
+  // settlement, add-with-activity logging, etc.).
+  // ----------------------------------------------------
+
+  // Add Customer — also logs an activity entry.
+  const handleAddCustomer = (customerData: Omit<Customer, 'id' | 'createdAt' | 'balanceBDT' | 'balanceUSD'>): Customer => {
+    const newCustomer = addCustomer(customerData);
+    addActivity({
+      id: `act-${Date.now()}`,
+      time: "Just now",
+      user: "Rakibul Riyet",
+      action: "Onboarded Customer",
+      details: `Created profile for ${customerData.name} (${customerData.companyName})`,
+      type: 'customer',
+    });
+    return newCustomer;
+  };
+
+  // Add Ad Account — also logs an activity entry.
+  const handleAddAdAccount = (accountData: AdAccount) => {
+    addAdAccount(accountData);
+    addActivity({
+      id: `act-${Date.now()}`,
+      time: "Just now",
+      user: "Rakibul R.",
+      action: "Cataloged Ad Account",
+      details: `Loaded ${accountData.adAccountName} (${accountData.platform}) to unassigned pool.`,
+      type: 'account',
+    });
+  };
+
+  // Submit New Sale Transaction — fans out to invoices, adAccounts,
+  // customers, cards, and activities in one orchestrated write.
   const handleExecuteSale = (saleData: Omit<Invoice, 'invoiceNo' | 'date'>) => {
     const serial = invoices.length + 1;
     const invoiceNo = `ADB 202416${serial.toString().padStart(3, '0')}`;
@@ -170,293 +222,71 @@ export default function App() {
     const newInvoice: Invoice = {
       ...saleData,
       invoiceNo,
-      date: today
+      date: today,
     };
 
-    // Update invoices ledger
-    setInvoices(prev => [newInvoice, ...prev]);
+    // 1. Invoices ledger
+    addInvoice(newInvoice);
 
-    // Mark the selected ad account as sold to this customer after checkout.
+    // 2. Mark ad account as sold (if applicable)
     if (saleData.adAccountId && saleData.customerId) {
-      setAdAccounts(prev => prev.map(acc => (
-        acc.adAccountId === saleData.adAccountId
-          ? { ...acc, accountStatus: 'Sold', assignedCustomer: saleData.customerId }
-          : acc
-      )));
+      markAccountSold(saleData.adAccountId, saleData.customerId);
     }
 
-    // Update customer wallet balances & activity metrics
-    setCustomers(prev => prev.map(cust => {
-      if (cust.id === saleData.customerId) {
-        // Increment their active usage balances BDT & USD
-        const updatedBDT = cust.balanceBDT + saleData.paidAmountBDT;
-        const updatedUSD = cust.balanceUSD + saleData.topupAmountUSD;
-        return {
-          ...cust,
-          balanceBDT: updatedBDT,
-          balanceUSD: updatedUSD
-        };
-      }
-      return cust;
-    }));
+    // 3. Customer wallet credit
+    if (saleData.customerId) {
+      applySaleCredit(saleData.customerId, saleData.paidAmountBDT, saleData.topupAmountUSD);
+    }
 
-    // Increment billing credit card load metrics if a card was linked
+    // 4. Billing card load metrics (if a card was linked)
     const targetAccount = adAccounts.find(acc => acc.adAccountId === saleData.adAccountId);
     if (targetAccount?.billingCard) {
-      setCards(prev => prev.map(card => {
-        if (card.cardName === targetAccount.billingCard) {
-          return {
-            ...card,
-            usageCount: card.usageCount + 1,
-            totalLoadedUSD: card.totalLoadedUSD + saleData.topupAmountUSD
-          };
-        }
-        return card;
-      }));
+      applyCardLoad(targetAccount.billingCard, saleData.topupAmountUSD);
     }
 
-    // Log the transaction in the activity timeline
-    const activity: ActivityLog = {
+    // 5. Activity log
+    addActivity({
       id: `act-${Date.now()}`,
       time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
       user: "Rakibul Riyet",
       action: "Completed Topup",
       details: `${invoiceNo} - Loaded $${saleData.topupAmountUSD.toFixed(1)} to ${saleData.adAccountName}`,
-      type: 'sale'
-    };
-    setActivities(prev => [activity, ...prev]);
+      type: 'sale',
+    });
 
-    // Trigger Success Notification & Route View to Ledger
+    // 6. Toast + route
     triggerToast(
       'success',
       'Sale Executed Successfully',
-      `Invoice ${invoiceNo} generated. ৳${saleData.paidAmountBDT.toLocaleString()} settled.`
+      `Invoice ${invoiceNo} generated. ৳${saleData.paidAmountBDT.toLocaleString()} settled.`,
     );
     setActiveView('dashboard');
   };
 
-  // 2. Add New Corporate Customer Profile
-  const handleAddCustomer = (customerData: Omit<Customer, 'id' | 'createdAt' | 'balanceBDT' | 'balanceUSD'>): Customer => {
-    const id = `CUST-${(customers.length + 101)}`;
-    const today = new Date().toISOString().split('T')[0];
-
-    const newCustomer: Customer = {
-      ...customerData,
-      id,
-      createdAt: today,
-      balanceBDT: 0,
-      balanceUSD: 0
-    };
-
-    setCustomers(prev => [newCustomer, ...prev]);
-
-    // Log activity
-    const activity: ActivityLog = {
-      id: `act-${Date.now()}`,
-      time: "Just now",
-      user: "Rakibul Riyet",
-      action: "Onboarded Customer",
-      details: `Created profile for ${customerData.name} (${customerData.companyName})`,
-      type: 'customer'
-    };
-    setActivities(prev => [activity, ...prev]);
-
-    triggerToast('success', 'Customer Onboarded', `${customerData.name} added with ID ${id}`);
-    return newCustomer;
-  };
-
-  // 3. Update Customer CRM Relationship Notes
-  const handleUpdateCustomerNotes = (customerId: string, notes: string) => {
-    setCustomers(prev => prev.map(cust => {
-      if (cust.id === customerId) {
-        return { ...cust, notes };
-      }
-      return cust;
-    }));
-    triggerToast('success', 'CRM Notes Updated', 'Customer relationship records synchronized.');
-  };
-
-  const handleUpdateCustomer = (updatedCust: Customer) => {
-    setCustomers(prev => prev.map(c => c.id === updatedCust.id ? updatedCust : c));
-    triggerToast('success', 'Customer Updated', `Profile updated for ${updatedCust.name}`);
-  };
-
-  // 4. Toggle Customer Favorite Status
-  const handleToggleFavorite = (customerId: string) => {
-    setCustomers(prev => prev.map(cust => {
-      if (cust.id === customerId) {
-        const nextState = !cust.favorite;
-        triggerToast(
-          'info', 
-          nextState ? 'Added to Favorites' : 'Removed from Favorites', 
-          `${cust.name} bookmarks toggled.`
-        );
-        return { ...cust, favorite: nextState };
-      }
-      return cust;
-    }));
-  };
-
-  // 5. Add New Social Ad Account Inventory
-  const handleAddAdAccount = (accountData: AdAccount) => {
-    setAdAccounts(prev => [accountData, ...prev]);
-
-    // Log Activity
-    const activity: ActivityLog = {
-      id: `act-${Date.now()}`,
-      time: "Just now",
-      user: "Rakibul R.",
-      action: "Cataloged Ad Account",
-      details: `Loaded ${accountData.adAccountName} (${accountData.platform}) to unassigned pool.`,
-      type: 'account'
-    };
-    setActivities(prev => [activity, ...prev]);
-
-    triggerToast('success', 'Ad Account Loaded', `${accountData.adAccountName} is now ready for deployment.`);
-  };
-
-  const handleUpdateAdAccount = (updatedAcc: AdAccount) => {
-    setAdAccounts(prev => prev.map(a => a.adAccountId === updatedAcc.adAccountId ? updatedAcc : a));
-    triggerToast('success', 'Ad Account Updated', `Updated settings for ${updatedAcc.adAccountName}`);
-  };
-
-  // 6. Update Account Status (Active/Terminated/Restricted)
-  const handleUpdateAccountStatus = (accountId: string, status: AdAccount['accountStatus']) => {
-    setAdAccounts(prev => prev.map(acc => {
-      if (acc.adAccountId === accountId) {
-        return { ...acc, accountStatus: status };
-      }
-      return acc;
-    }));
-
-    triggerToast('success', 'Account Status Sync', `Account ID ...${accountId.slice(-6)} set to ${status}.`);
-  };
-
-  // 7. Bulk Update Accounts statuses
-  const handleBulkUpdateStatus = (accountIds: string[], status: AdAccount['accountStatus']) => {
-    setAdAccounts(prev => prev.map(acc => {
-      if (accountIds.includes(acc.adAccountId)) {
-        return { ...acc, accountStatus: status };
-      }
-      return acc;
-    }));
-
-    triggerToast('success', 'Bulk Action Complete', `Successfully set ${accountIds.length} accounts to ${status}.`);
-  };
-
-  // 8. Toggle Credit Card Operational status
-  const handleToggleCardStatus = (cardId: string) => {
-    setCards(prev => prev.map(c => {
-      if (c.id === cardId) {
-        const nextStatus = c.status === 'Active' ? 'Disable' : 'Active';
-        triggerToast('warning', 'Card Policy Modified', `Card ${c.cardName} set to ${nextStatus}.`);
-        return { ...c, status: nextStatus as any };
-      }
-      return c;
-    }));
-  };
-
-  const handleUpdateCard = (updatedCard: BillingCard) => {
-    setCards(prev => prev.map(c => c.id === updatedCard.id ? updatedCard : c));
-    triggerToast('success', 'Card Updated', `Updated settings for ${updatedCard.cardName}`);
-  };
-
-  const handleUpdateSeries = (updatedSeries: Series) => {
-    setSeries(prev => prev.map(s => s.seriesId === updatedSeries.seriesId ? updatedSeries : s));
-    triggerToast('success', 'Series Updated', `Updated series ${updatedSeries.seriesName}`);
-  };
-
-  const handleUpdateVendor = (updatedVendor: Vendor) => {
-    setVendors(prev => prev.map(v => v.id === updatedVendor.id ? updatedVendor : v));
-    triggerToast('success', 'Vendor Updated', `Updated vendor ${updatedVendor.name}`);
-  };
-
-  const handleUpdateSaleSetup = (updatedSetup: SaleSetup) => {
-    setSetups(prev => prev.map(s => (s.groupId === updatedSetup.groupId && s.adAccountId === updatedSetup.adAccountId) ? updatedSetup : s));
-    triggerToast('success', 'Sale Setup Updated', `Updated assignment for Group ID ${updatedSetup.groupId}`);
-  };
-
-  const handleUpdateInvoice = (updatedInvoice: Invoice) => {
-    setInvoices(prev => prev.map(inv => inv.invoiceNo === updatedInvoice.invoiceNo ? updatedInvoice : inv));
-    triggerToast('success', 'Record Updated', `Updated invoice ${updatedInvoice.invoiceNo}`);
-  };
-
-  // 9. Auditor approves a Pending BDT Invoice Payment
-  const handleApproveInvoice = (invoiceNo: string) => {
-    setInvoices(prev => prev.map(inv => {
-      if (inv.invoiceNo === invoiceNo) {
-        return {
-          ...inv,
-          approvalStatus: 'Approved',
-          paymentStatus: 'Paid'
-        };
-      }
-      return inv;
-    }));
-
-    triggerToast('success', 'Payment Cleared', `Invoice ${invoiceNo} marked as settled.`);
-  };
-
-  // 10. Auditor rejects a Pending BDT Invoice Payment
-  const handleRejectInvoice = (invoiceNo: string) => {
-    setInvoices(prev => prev.map(inv => {
-      if (inv.invoiceNo === invoiceNo) {
-        return {
-          ...inv,
-          approvalStatus: 'Rejected',
-          paymentStatus: 'Due'
-        };
-      }
-      return inv;
-    }));
-
-    triggerToast('danger', 'Payment Rejected', `Invoice ${invoiceNo} marked as Rejected.`);
-  };
-
-  // 11. Sync Top-up API complete status
-  const handleSyncTopupStatus = (invoiceNo: string) => {
-    setInvoices(prev => prev.map(inv => {
-      if (inv.invoiceNo === invoiceNo) {
-        return {
-          ...inv,
-          topupStatus: 'Successfull'
-        };
-      }
-      return inv;
-    }));
-
-    triggerToast('success', 'Publisher Sync Successful', `Publisher accounts refloaded for ${invoiceNo}.`);
-  };
-
-  // 12. Simulate Reports PDF / Excel export
+  // Simulate Reports PDF / Excel export
   const handleTriggerExport = (format: 'pdf' | 'excel' | 'csv') => {
     triggerToast(
       'info',
       'Generating Document export...',
-      `Processing ledger rows into standard AdsBuzz ${format.toUpperCase()} layout.`
+      `Processing ledger rows into standard AdsBuzz ${format.toUpperCase()} layout.`,
     );
     setTimeout(() => {
       triggerToast(
         'success',
         'Download Complete',
-        `AdsBuzz_Ledger_Statements_June2026.${format === 'excel' ? 'xlsx' : format}`
+        `AdsBuzz_Ledger_Statements_June2026.${format === 'excel' ? 'xlsx' : format}`,
       );
     }, 1500);
   };
 
-  // 13. Dynamic search navigation linkages from Suggestions
+  // Header global-search → cross-view navigation
   const handleSelectCustomerFromHeader = (id: string) => {
-    setSelectedCustomerInCRM(id);
+    setPendingInitialCustomerId(id);
     setActiveView('customers');
   };
 
-  const handleSelectAdAccountFromHeader = (id: string) => {
+  const handleSelectAdAccountFromHeader = (_id: string) => {
     setActiveView('ad-accounts');
-  };
-
-  const setSelectedCustomerInCRM = (id: string) => {
-    const el = document.getElementById(`customer-item-${id}`);
-    if (el) el.click();
   };
 
   // Dynamic statistics computations for dashboard KPIs
@@ -488,10 +318,10 @@ export default function App() {
     };
   };
 
-  const stats = computeDashboardStats();
+  const stats = useMemo(computeDashboardStats, [invoices, adAccounts, customers, vendors]);
 
   return (
-    <div className={`flex font-sans min-h-screen ${darkMode ? 'dark bg-slate-950 text-slate-100' : 'bg-[#F8F5F0] text-slate-800'}`} id="app-root-container">
+    <div className={`flex font-sans min-h-screen ${darkMode ? 'dark bg-slate-950 text-slate-100' : 'bg-app-bg text-slate-800'}`} id="app-root-container">
       
       {/* Sidebar Navigation */}
       <Sidebar 
@@ -532,23 +362,14 @@ export default function App() {
                 if (actionType === 'new-sale') {
                   setActiveView('sales');
                 } else if (actionType === 'new-customer') {
+                  setPendingOpenAddCustomer(true);
                   setActiveView('customers');
-                  setTimeout(() => {
-                    const btn = document.getElementById('btn-add-customer');
-                    if (btn) btn.click();
-                  }, 100);
                 } else if (actionType === 'new-topup') {
+                  setPendingInitialCheckoutStep(2);
                   setActiveView('sales');
-                  setTimeout(() => {
-                    const btn = document.getElementById('checkout-next');
-                    if (btn) { btn.click(); btn.click(); }
-                  }, 150);
                 } else if (actionType === 'assign-account') {
+                  setPendingOpenAddAccount(true);
                   setActiveView('ad-accounts');
-                  setTimeout(() => {
-                    const btn = document.getElementById('btn-add-account');
-                    if (btn) btn.click();
-                  }, 100);
                 }
               }}
               onSelectInsightsAccount={setSelectedInsightsAccountId}
@@ -556,7 +377,7 @@ export default function App() {
           )}
 
           {activeView === 'customers' && (
-            <CustomersView 
+            <CustomersView
               customers={customers}
               adAccounts={adAccounts}
               invoices={invoices}
@@ -565,22 +386,21 @@ export default function App() {
               onUpdateCustomerNotes={handleUpdateCustomerNotes}
               onToggleFavorite={handleToggleFavorite}
               onTriggerTopup={(custId) => {
-                setSelectedCustomerIdInCheckout(custId);
+                setPendingInitialSalesCustomerId(custId);
                 setActiveView('sales');
                 triggerToast('info', 'Customer Selected', 'Initiating Shopify Checkout sequence');
               }}
               onTriggerAssign={() => {
+                setPendingOpenAddAccount(true);
                 setActiveView('ad-accounts');
-                setTimeout(() => {
-                  const btn = document.getElementById('btn-add-account');
-                  if (btn) btn.click();
-                }, 100);
               }}
+              autoOpenAddModal={pendingOpenAddCustomer}
+              initialCustomerId={pendingInitialCustomerId ?? undefined}
             />
           )}
 
           {activeView === 'sales' && (
-            <SalesView 
+            <SalesView
               customers={customers}
               adAccounts={adAccounts}
               invoices={invoices}
@@ -589,12 +409,11 @@ export default function App() {
               onUpdateInvoice={handleUpdateInvoice}
               onAddCustomer={handleAddCustomer}
               onNavigateToCustomers={() => {
+                setPendingOpenAddCustomer(true);
                 setActiveView('customers');
-                setTimeout(() => {
-                  const btn = document.getElementById('btn-add-customer');
-                  if (btn) btn.click();
-                }, 100);
               }}
+              initialCheckoutStep={pendingInitialCheckoutStep ?? undefined}
+              initialCustomerId={pendingInitialSalesCustomerId ?? undefined}
             />
           )}
 
@@ -604,10 +423,7 @@ export default function App() {
               customers={customers}
               adAccounts={adAccounts}
               onUpdateSetup={handleUpdateSaleSetup}
-              onAddSetup={(newSetup) => {
-                setSetups(prev => [newSetup, ...prev]);
-                triggerToast('success', 'Campaign Linked', `Group ID ${newSetup.groupId} successfully configured.`);
-              }}
+              onAddSetup={addSetup}
             />
           )}
 
@@ -622,7 +438,7 @@ export default function App() {
           )}
 
           {activeView === 'ad-accounts' && (
-            <AdAccountsView 
+            <AdAccountsView
               adAccounts={adAccounts}
               customers={customers}
               cards={cards}
@@ -631,42 +447,35 @@ export default function App() {
               onUpdateAdAccount={handleUpdateAdAccount}
               onUpdateAccountStatus={handleUpdateAccountStatus}
               onBulkUpdateStatus={handleBulkUpdateStatus}
+              autoOpenAddModal={pendingOpenAddAccount}
             />
           )}
 
           {activeView === 'series' && (
-            <SeriesView 
+            <SeriesView
               series={series}
               adAccounts={adAccounts}
               onUpdateSeries={handleUpdateSeries}
-              onAddSeries={(newS) => {
-                setSeries(prev => [...prev, newS]);
-                triggerToast('success', 'Series Cataloged', `Series ${newS.seriesName} is now active.`);
-              }}
+              onAddSeries={addSeries}
             />
           )}
 
           {activeView === 'cards' && (
-            <CardsView 
+            <CardsView
               cards={cards}
               adAccounts={adAccounts}
-              onUpdateCard={handleUpdateCard}
-              onAddCard={(newC) => {
-                setCards(prev => [...prev, newC]);
-                triggerToast('success', 'Card Registered', `Successfully added corporate card: ${newC.cardName}`);
-              }}
+              onUpdateCard={updateCard}
+              onAddCard={addCard}
               onToggleCardStatus={handleToggleCardStatus}
             />
           )}
 
           {activeView === 'vendors' && (
-            <VendorsView 
+            <VendorsView
               vendors={vendors}
               onUpdateVendor={handleUpdateVendor}
-              onAddVendor={(newV) => {
-                setVendors(prev => [...prev, newV]);
-                triggerToast('success', 'Vendor Onboarded', `Onboarded Wholesaler: ${newV.name}`);
-              }}
+              onAddVendor={addVendor}
+              paymentMethods={settings.paymentMethods}
             />
           )}
 
@@ -698,20 +507,11 @@ export default function App() {
           )}
 
           {activeView === 'settings' && (
-            <SettingsView 
+            <SettingsView
               settings={settings}
-              onUpdateBaseRate={(newRate) => {
-                setSettings(prev => ({ ...prev, defaultDollarRate: newRate }));
-                triggerToast('success', 'Global Dollar Rate Synchronized', `Standard exchange rate updated to ৳${newRate}/$.`);
-              }}
-              onAddPaymentMethod={(newPm) => {
-                setSettings(prev => ({ ...prev, paymentMethods: [...prev.paymentMethods, newPm] }));
-                triggerToast('success', 'Channel Connected', `Logged operational income channel: ${newPm}`);
-              }}
-              onDeletePaymentMethod={(pmToDelete) => {
-                setSettings(prev => ({ ...prev, paymentMethods: prev.paymentMethods.filter(p => p !== pmToDelete) }));
-                triggerToast('warning', 'Channel Disconnected', `Removed income channel: ${pmToDelete}`);
-              }}
+              onUpdateBaseRate={handleUpdateBaseRate}
+              onAddPaymentMethod={handleAddPaymentMethod}
+              onDeletePaymentMethod={handleDeletePaymentMethod}
             />
           )}
 
@@ -723,15 +523,4 @@ export default function App() {
 
     </div>
   );
-
-  // Helper to pre-select customer in Checkout select element
-  function setSelectedCustomerIdInCheckout(id: string) {
-    setTimeout(() => {
-      const select = document.getElementById('checkout-customer-select') as HTMLSelectElement;
-      if (select) {
-        select.value = id;
-        select.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    }, 100);
-  }
 }

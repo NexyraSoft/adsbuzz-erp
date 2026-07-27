@@ -22,6 +22,7 @@ import {
   PanelLeftOpen,
   X
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import logo from '../assets/images/logo.svg';
 import logoWhite from '../assets/images/logo_white.svg';
 
@@ -35,7 +36,7 @@ interface SidebarProps {
 interface MenuItem {
   id: string;
   name: string;
-  icon: any;
+  icon: LucideIcon;
 }
 
 const MENU_ITEMS: MenuItem[] = [
@@ -109,7 +110,7 @@ export default function Sidebar({ activeView, onNavigate, mobileOpen = false, on
     <>
       {/* Desktop/Tablet Sidebar */}
       <div 
-        className="hidden md:flex bg-[#131926] text-white flex-col justify-between transition-all duration-300 ease-in-out relative h-screen border-r border-slate-800 flex-shrink-0 z-30 select-none"
+        className="hidden md:flex bg-sidebar-navy text-white flex-col justify-between transition-all duration-300 ease-in-out relative h-screen border-r border-slate-800 flex-shrink-0 z-30 select-none"
         style={{ width: isCollapsed ? '72px' : '240px' }}
         id="sidebar-navigation"
       >
@@ -174,9 +175,11 @@ export default function Sidebar({ activeView, onNavigate, mobileOpen = false, on
                     onClick={() => onNavigate(item.id)}
                     onMouseEnter={() => setHoveredItem(item.id)}
                     onMouseLeave={() => setHoveredItem(null)}
+                    aria-label={item.name}
+                    aria-current={isActive ? 'page' : undefined}
                     className={`w-full flex items-center ${isCollapsed ? 'justify-center p-2.5' : 'gap-3 px-3 py-2.5'} rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
                       isActive 
-                        ? 'bg-[#F68B2D] text-white shadow-md font-bold' 
+                        ? 'bg-brand-orange text-white shadow-md font-bold' 
                         : 'text-slate-400 hover:bg-slate-800/60 hover:text-white'
                     }`}
                   >
@@ -191,7 +194,7 @@ export default function Sidebar({ activeView, onNavigate, mobileOpen = false, on
                   {isCollapsed && hoveredItem === item.id && (
                     <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1.5 bg-white border border-slate-300 text-slate-900 font-bold text-xs rounded-lg shadow-2xl whitespace-nowrap z-50 pointer-events-none flex items-center gap-1.5 animate-in fade-in zoom-in-95 duration-150">
                       <span className="text-slate-900 font-bold">{item.name}</span>
-                      {isActive && <span className="h-1.5 w-1.5 rounded-full bg-[#F68B2D]" />}
+                      {isActive && <span className="h-1.5 w-1.5 rounded-full bg-brand-orange" />}
                     </div>
                   )}
                 </div>
@@ -220,7 +223,7 @@ export default function Sidebar({ activeView, onNavigate, mobileOpen = false, on
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'tween', duration: 0.25 }}
-              className="absolute top-0 bottom-0 left-0 w-[270px] bg-[#131926] text-white flex flex-col justify-between shadow-2xl border-r border-slate-800"
+              className="absolute top-0 bottom-0 left-0 w-[270px] bg-sidebar-navy text-white flex flex-col justify-between shadow-2xl border-r border-slate-800"
             >
               <div>
                 {/* Brand & Close Header */}
@@ -258,7 +261,7 @@ export default function Sidebar({ activeView, onNavigate, mobileOpen = false, on
                         }}
                         className={`w-full flex items-center gap-3 p-3 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 active:scale-95 group cursor-pointer hover:bg-slate-800/50 ${
                           isActive 
-                            ? 'bg-[#F68B2D] text-white shadow-md font-bold' 
+                            ? 'bg-brand-orange text-white shadow-md font-bold' 
                             : 'text-slate-400 hover:text-white'
                         }`}
                       >

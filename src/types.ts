@@ -5,6 +5,31 @@
 
 export type PlatformType = 'Facebook' | 'TikTok' | 'Google' | 'Snapchat';
 
+/** Lifecycle status used by Ad Accounts (extends the generic Status with Terminated). */
+export type AdAccountStatus =
+  | 'Active' | 'Terminated' | 'Disabled' | 'Restricted' | 'Available' | 'Sold' | 'Disable' | 'Need Support';
+
+/** Lifecycle status used by Billing Cards. */
+export type CardStatus =
+  | 'Active' | 'Sold' | 'Disable' | 'Need Support' | 'Available' | 'Disabled' | 'Restricted' | 'FB Restricted';
+
+/** Generic status shared by Vendor, Series, Sale Setup. */
+export type EntityStatus =
+  | 'Active' | 'Sold' | 'Disable' | 'Need Support' | 'Available' | 'Inactive';
+
+/** Lifecycle status for Sale Setup (adds 'Pending' on top of EntityStatus). */
+export type SaleSetupStatus =
+  | 'Active' | 'Sold' | 'Disable' | 'Need Support' | 'Available' | 'Inactive' | 'Pending';
+
+/** Invoice payment status (Pay / Due / Partial). */
+export type InvoicePaymentStatus = 'Paid' | 'Due' | 'Partially Paid';
+
+/** Invoice topup-status as reported by the publisher API. */
+export type InvoiceTopupStatus = 'Successfull' | 'Failed' | 'Pending';
+
+/** Auditor approval status for an invoice. */
+export type InvoiceApprovalStatus = 'Approved' | 'Pending' | 'Rejected';
+
 export interface AdAccount {
   adAccountId: string; // ID of the ad account
   adAccountName: string; // Display name
@@ -14,7 +39,7 @@ export interface AdAccount {
   monthlySpending: number; // standard or average spending
   accountOwner: string; // e.g. "ADSBUZZ", "LAMHA TECH"
   userGroupCode: string; // e.g. "GC - 321", "GC - 345"
-  accountStatus: 'Active' | 'Terminated' | 'Disabled' | 'Restricted' | 'Available' | 'Sold' | 'Disable' | 'Need Support';
+  accountStatus: AdAccountStatus;
   note?: string;
   bmId?: string; // Business Manager ID
   bmName?: string; // Business Manager Name
@@ -55,10 +80,10 @@ export interface Invoice {
   totalAmountBDT: number;
   paidAmountBDT: number;
   dueAmountBDT: number;
-  paymentStatus: 'Paid' | 'Due' | 'Partially Paid';
+  paymentStatus: InvoicePaymentStatus;
   paymentMethod: string; // e.g. "ADSBUZZ EBL - 1342"
-  topupStatus: 'Successfull' | 'Failed' | 'Pending';
-  approvalStatus: 'Approved' | 'Pending' | 'Rejected';
+  topupStatus: InvoiceTopupStatus;
+  approvalStatus: InvoiceApprovalStatus;
   paymentVerificationStatus?: 'Pending' | 'Approved' | 'Declined';
   paymentScreenshot?: string; // data URL of uploaded payment proof image
   note?: string;
@@ -75,7 +100,7 @@ export interface BillingCard {
   cardType?: string;
   cardPlatform?: string;
   cardInitial: string; // initials for avatar
-  status: 'Active' | 'Sold' | 'Disable' | 'Need Support' | 'Available' | 'Disabled' | 'Restricted' | 'FB Restricted';
+  status: CardStatus;
   linkedAccountsCount: number;
   usageCount: number;
   totalLoadedUSD: number;
@@ -92,7 +117,7 @@ export interface Vendor {
     paymentMethod: string;
     transactionId: string;
   }>;
-  status: 'Active' | 'Sold' | 'Disable' | 'Need Support' | 'Available' | 'Inactive';
+  status: EntityStatus;
   email: string;
   phone: string;
 }
@@ -101,7 +126,7 @@ export interface Series {
   seriesId: string;
   seriesName: string; // e.g. "90'S SERIES", "VH SERIES"
   platform: PlatformType;
-  status: 'Active' | 'Sold' | 'Disable' | 'Need Support' | 'Available' | 'Inactive';
+  status: EntityStatus;
 }
 
 export interface SaleSetup {
@@ -112,7 +137,7 @@ export interface SaleSetup {
   platform: PlatformType;
   dollarRate: number;
   monthlySpending: number;
-  status: 'Active' | 'Sold' | 'Disable' | 'Need Support' | 'Available' | 'Inactive' | 'Pending';
+  status: SaleSetupStatus;
   serviceType?: 'Ad Account Topup' | 'Others';
   serviceDetails?: string;
   serviceFee?: number;

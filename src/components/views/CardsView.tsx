@@ -3,12 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { Shield, Activity, Plus, ToggleLeft, ToggleRight, X, Edit2 } from 'lucide-react';
+import React, { memo, useState } from 'react';
+import { Shield, Activity, Plus, ToggleLeft, ToggleRight, Edit2 } from 'lucide-react';
 import { BillingCard, AdAccount } from '../../types';
 import { PlatformText } from '../PlatformText';
 import StatCard from '../StatCard';
+import { Modal } from '../ui/Modal';
+import { Button } from '../ui/Button';
 
 // Card-type brand icon helper (visually distinguishes Visa / Mastercard / Union Pay / Amex)
 const getCardTypeIcon = (cardType?: string) => {
@@ -75,7 +76,7 @@ interface CardsViewProps {
   onToggleCardStatus: (cardId: string) => void;
 }
 
-export default function CardsView({
+function CardsView({
   cards,
   adAccounts,
   onAddCard,
@@ -160,7 +161,7 @@ export default function CardsView({
           <button 
             id="btn-add-card"
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 bg-[#F68B2D] hover:bg-[#e07920] active:scale-95 transition-all text-white font-medium text-xs px-4 py-2.5 rounded-xl shadow-lg shadow-orange-500/10 cursor-pointer"
+            className="flex items-center gap-2 bg-brand-orange hover:bg-brand-orange-dark active:scale-95 transition-all text-white font-medium text-xs px-4 py-2.5 rounded-xl shadow-lg shadow-orange-500/10 cursor-pointer"
           >
             <Plus size={16} /> Log Funding Card
           </button>
@@ -205,7 +206,7 @@ export default function CardsView({
                   onClick={() => setSelectedCardId(card.id)}
                   className={`p-6 rounded-2xl relative overflow-hidden transition-all cursor-pointer transform hover:-translate-y-0.5 ${
                     isSelected 
-                      ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white border-2 border-[#F68B2D] shadow-md ring-2 ring-[#F68B2D]/10' 
+                      ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white border-2 border-brand-orange shadow-md ring-2 ring-brand-orange/10' 
                       : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-slate-300'
                   }`}
                 >
@@ -220,16 +221,18 @@ export default function CardsView({
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openEditModal(card);
-                        }}
-                        className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-200 dark:hover:bg-slate-300 transition-all text-slate-950 dark:text-slate-950 font-bold text-[10px] sm:text-[11px] px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer whitespace-nowrap border border-slate-300 dark:border-slate-400 shadow-xs"
-                        title="Edit Card"
-                      >
-                        <Edit2 size={11} /> Edit
-                      </button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openEditModal(card);
+                          }}
+                          leftIcon={<Edit2 size={11} />}
+                          title="Edit Card"
+                        >
+                          Edit
+                        </Button>
                       {(() => {
                         const Icon = getCardTypeIcon(card.cardType);
                         return <Icon.render />;
@@ -289,13 +292,15 @@ export default function CardsView({
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button
+                <Button
                   id="btn-edit-card"
+                  variant="outline"
+                  size="sm"
                   onClick={() => openEditModal(selectedCard)}
-                  className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-200 dark:hover:bg-slate-300 transition-all text-slate-950 dark:text-slate-950 font-bold text-[10px] sm:text-[11px] px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer whitespace-nowrap border border-slate-300 dark:border-slate-400 shadow-xs"
+                  leftIcon={<Edit2 size={11} />}
                 >
-                  <Edit2 size={11} /> Edit Card
-                </button>
+                  Edit Card
+                </Button>
                 <button 
                   id="btn-toggle-card"
                   onClick={() => onToggleCardStatus(selectedCard.id)}
@@ -372,207 +377,175 @@ export default function CardsView({
       </div>
 
       {/* Add Card Modal */}
-      {showAddModal && (
-        <div className="custom-modal-backdrop fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="custom-modal-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl max-w-sm w-full overflow-hidden"
-          >
-            <div className="custom-modal-header p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/20 flex justify-between items-center">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Register Funding Credit Card</h3>
-              <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
-            </div>
-            <form onSubmit={handleCreateCardSubmit} className="p-6 space-y-4" id="form-add-card">
-              <div>
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Display Name</label>
-                <input
-                  id="add-card-name"
-                  type="text"
-                  required
-                  placeholder="e.g. ADSBUZZ DBBL - 7473"
-                  className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100"
-                  value={newCardName}
-                  onChange={(e) => setNewCardName(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Initials</label>
-                <input
-                  id="add-card-initial"
-                  type="text"
-                  placeholder="e.g. DB"
-                  maxLength={2}
-                  className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100 font-mono"
-                  value={newCardInitial}
-                  onChange={(e) => setNewCardInitial(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Type</label>
-                <select
-                  id="add-card-type"
-                  className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100"
-                  value={newCardType}
-                  onChange={(e) => setNewCardType(e.target.value)}
-                >
-                  <option value="Visa">Visa</option>
-                  <option value="Mastercard">Mastercard</option>
-                  <option value="Union Pay">Union Pay</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Platform</label>
-                <select
-                  id="add-card-platform"
-                  className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100"
-                  value={newCardPlatform}
-                  onChange={(e) => setNewCardPlatform(e.target.value)}
-                >
-                  <option value="">Select platform</option>
-                  <option value="RIZON">RIZON</option>
-                  <option value="BYBIT">BYBIT</option>
-                  <option value="PAYONNER">PAYONNER</option>
-                  <option value="WISE">WISE</option>
-                  <option value="AIRWALEX">AIRWALEX</option>
-                  <option value="MERCURY">MERCURY</option>
-                  <option value="MEDIA BUYING">MEDIA BUYING</option>
-                  <option value="REDOTPAY">REDOTPAY</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Status</label>
-                <select
-                  id="add-card-status"
-                  className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100 font-medium"
-                  value={newCardStatus}
-                  onChange={(e) => setNewCardStatus(e.target.value as BillingCard['status'])}
-                >
-                  <option value="Active">Active</option>
-                  <option value="Disable">Disable</option>
-                  <option value="Restricted">Restricted</option>
-                </select>
-              </div>
+      <Modal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        title="Register Funding Credit Card"
+        size="sm"
+        variant="animated"
+      >
+        <form onSubmit={handleCreateCardSubmit} className="p-6 space-y-4" id="form-add-card">
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Display Name</label>
+            <input
+              id="add-card-name"
+              type="text"
+              required
+              placeholder="e.g. ADSBUZZ DBBL - 7473"
+              className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100"
+              value={newCardName}
+              onChange={(e) => setNewCardName(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Initials</label>
+            <input
+              id="add-card-initial"
+              type="text"
+              placeholder="e.g. DB"
+              maxLength={2}
+              className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100 font-mono"
+              value={newCardInitial}
+              onChange={(e) => setNewCardInitial(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Type</label>
+            <select
+              id="add-card-type"
+              className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100"
+              value={newCardType}
+              onChange={(e) => setNewCardType(e.target.value)}
+            >
+              <option value="Visa">Visa</option>
+              <option value="Mastercard">Mastercard</option>
+              <option value="Union Pay">Union Pay</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Platform</label>
+            <select
+              id="add-card-platform"
+              className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100"
+              value={newCardPlatform}
+              onChange={(e) => setNewCardPlatform(e.target.value)}
+            >
+              <option value="">Select platform</option>
+              <option value="RIZON">RIZON</option>
+              <option value="BYBIT">BYBIT</option>
+              <option value="PAYONNER">PAYONNER</option>
+              <option value="WISE">WISE</option>
+              <option value="AIRWALEX">AIRWALEX</option>
+              <option value="MERCURY">MERCURY</option>
+              <option value="MEDIA BUYING">MEDIA BUYING</option>
+              <option value="REDOTPAY">REDOTPAY</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Status</label>
+            <select
+              id="add-card-status"
+              className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100 font-medium"
+              value={newCardStatus}
+              onChange={(e) => setNewCardStatus(e.target.value as BillingCard['status'])}
+            >
+              <option value="Active">Active</option>
+              <option value="Disable">Disable</option>
+              <option value="Restricted">Restricted</option>
+            </select>
+          </div>
 
-              <div className="custom-modal-footer flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="text-xs font-bold text-slate-400 hover:text-slate-600 px-4 py-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-[#F68B2D] hover:bg-[#e07920] text-white text-xs font-bold px-4 py-2.5 rounded-xl cursor-pointer"
-                >
-                  Register Card
-                </button>
-              </div>
-            </form>
-          </motion.div>
-        </div>
-      )}
+          <div className="custom-modal-footer flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <Button variant="ghost" onClick={() => setShowAddModal(false)}>Cancel</Button>
+            <Button type="submit">Register Card</Button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Edit Card Modal */}
-      {showEditModal && editCardData && (
-        <div className="custom-modal-backdrop fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="custom-modal-card bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl max-w-sm w-full overflow-hidden"
-          >
-            <div className="custom-modal-header p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/20 flex justify-between items-center">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Edit Billing Card</h3>
-              <button onClick={() => setShowEditModal(false)} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
-            </div>
-            <form onSubmit={handleEditCardSubmit} className="p-6 space-y-4" id="form-edit-card">
-              <div>
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Display Name</label>
-                <input
-                  id="edit-card-name"
-                  type="text"
-                  required
-                  className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100"
-                  value={editCardData.cardName}
-                  onChange={(e) => setEditCardData({ ...editCardData, cardName: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Initials</label>
-                <input
-                  id="edit-card-initial"
-                  type="text"
-                  maxLength={2}
-                  className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100 font-mono"
-                  value={editCardData.cardInitial}
-                  onChange={(e) => setEditCardData({ ...editCardData, cardInitial: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Type</label>
-                <input
-                  id="edit-card-type"
-                  type="text"
-                  className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100"
-                  value={editCardData.cardType || ''}
-                  onChange={(e) => setEditCardData({ ...editCardData, cardType: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Platform</label>
-                <input
-                  id="edit-card-platform"
-                  type="text"
-                  className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100"
-                  value={editCardData.cardPlatform || ''}
-                  onChange={(e) => setEditCardData({ ...editCardData, cardPlatform: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Total Loaded USD ($)</label>
-                <input
-                  id="edit-card-loaded"
-                  type="number"
-                  className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100"
-                  value={editCardData.totalLoadedUSD}
-                  onChange={(e) => setEditCardData({ ...editCardData, totalLoadedUSD: parseFloat(e.target.value) || 0 })}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Status</label>
-                <select
-                  id="edit-card-status"
-                  className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100 font-medium"
-                  value={editCardData.status}
-                  onChange={(e) => setEditCardData({ ...editCardData, status: e.target.value as BillingCard['status'] })}
-                >
-                  <option value="Active">Active</option>
-                  <option value="Disable">Disable</option>
-                  <option value="FB Restricted">FB Restricted</option>
-                </select>
-              </div>
+      <Modal
+        isOpen={showEditModal && !!editCardData}
+        onClose={() => setShowEditModal(false)}
+        title="Edit Billing Card"
+        size="sm"
+        variant="animated"
+      >
+        <form onSubmit={handleEditCardSubmit} className="p-6 space-y-4" id="form-edit-card">
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Display Name</label>
+            <input
+              id="edit-card-name"
+              type="text"
+              required
+              className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100"
+              value={editCardData?.cardName ?? ''}
+              onChange={(e) => editCardData && setEditCardData({ ...editCardData, cardName: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Initials</label>
+            <input
+              id="edit-card-initial"
+              type="text"
+              maxLength={2}
+              className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100 font-mono"
+              value={editCardData?.cardInitial ?? ''}
+              onChange={(e) => editCardData && setEditCardData({ ...editCardData, cardInitial: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Type</label>
+            <input
+              id="edit-card-type"
+              type="text"
+              className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100"
+              value={editCardData?.cardType || ''}
+              onChange={(e) => editCardData && setEditCardData({ ...editCardData, cardType: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Card Platform</label>
+            <input
+              id="edit-card-platform"
+              type="text"
+              className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100"
+              value={editCardData?.cardPlatform || ''}
+              onChange={(e) => editCardData && setEditCardData({ ...editCardData, cardPlatform: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Total Loaded USD ($)</label>
+            <input
+              id="edit-card-loaded"
+              type="number"
+              className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100"
+              value={editCardData?.totalLoadedUSD ?? 0}
+              onChange={(e) => editCardData && setEditCardData({ ...editCardData, totalLoadedUSD: parseFloat(e.target.value) || 0 })}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Status</label>
+            <select
+              id="edit-card-status"
+              className="w-full text-xs p-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 dark:text-slate-100 font-medium"
+              value={editCardData?.status ?? 'Active'}
+              onChange={(e) => editCardData && setEditCardData({ ...editCardData, status: e.target.value as BillingCard['status'] })}
+            >
+              <option value="Active">Active</option>
+              <option value="Disable">Disable</option>
+              <option value="FB Restricted">FB Restricted</option>
+            </select>
+          </div>
 
-              <div className="custom-modal-footer flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setShowEditModal(false)}
-                  className="text-xs font-bold text-slate-400 hover:text-slate-600 px-4 py-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-[#F68B2D] hover:bg-[#e07920] text-white text-xs font-bold px-4 py-2.5 rounded-xl cursor-pointer"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </motion.div>
-        </div>
-      )}
+          <div className="custom-modal-footer flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <Button variant="ghost" onClick={() => setShowEditModal(false)}>Cancel</Button>
+            <Button type="submit">Save Changes</Button>
+          </div>
+        </form>
+      </Modal>
 
     </div>
   );
 }
+
+export default memo(CardsView);
