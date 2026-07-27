@@ -466,13 +466,13 @@ function SalesView({
                     >
                       <option value="" disabled>Choose Customer</option>
                       {customers
-                        .filter(c => !groupIdCode || c.groupId === groupIdCode || groupIdCode === 'GC-101')
+                        .filter(c => !groupIdCode || c.groupId === groupIdCode)
                         .map(c => (
                           <option key={c.id} value={c.id}>{c.name} ({c.companyName})</option>
                         ))}
                     </select>
                     <p className="text-[10px] text-slate-400 mt-1.5">
-                      Showing {customers.filter(c => !groupIdCode || c.groupId === groupIdCode || groupIdCode === 'GC-101').length} of {customers.length} customers in this group.
+                      Showing {customers.filter(c => !groupIdCode || c.groupId === groupIdCode).length} of {customers.length} customers in this group.
                     </p>
                   </div>
 
