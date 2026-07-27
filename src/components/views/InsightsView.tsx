@@ -208,7 +208,7 @@ function InsightsView({ invoices, adAccounts, vendors, cards = [], series = [], 
         </div>
 
         {/* Margin (%) - Soft Gold/Yellow */}
-        <div className="p-5 rounded-2xl border border-[#FDE68A] bg-[#FFFBE6] shadow-sm space-y-1">
+        <div className="p-5 rounded-2xl border border-border-yellow bg-surface-yellow shadow-sm space-y-1">
           <p className="text-[10px] font-bold text-brand-blue-deep/80 uppercase tracking-wider">Margin (%)</p>
           <p className="text-2xl font-black text-brand-blue-deep">{marginPercentage}</p>
           <p className="text-[10px] text-brand-blue-deep/70 font-medium">Profit yield ratio</p>
@@ -494,7 +494,7 @@ function InsightsView({ invoices, adAccounts, vendors, cards = [], series = [], 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start" id="channel-analytics-panel">
         {/* Channel Wise Payment Received */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/70 dark:border-slate-800 shadow-sm overflow-hidden ring-1 ring-slate-900/[0.02]">
-          <div className="insight-card-header bg-gradient-to-r from-brand-blue-deep to-brand-blue text-white px-4 py-3 font-extrabold text-xs uppercase tracking-[0.12em] flex items-center justify-between">
+          <div className="card-header-title bg-surface-orange text-brand-blue-deep border-b border-border-orange px-4 py-2.5 text-center font-extrabold text-xs uppercase tracking-wider">
             <span>Channel Wise Payment Received</span>
             <span className="text-[10px] font-bold opacity-80 normal-case tracking-normal">All transactions</span>
           </div>
@@ -560,7 +560,7 @@ function InsightsView({ invoices, adAccounts, vendors, cards = [], series = [], 
 
         {/* Total Sale + Daily Breakdown */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/70 dark:border-slate-800 shadow-sm overflow-hidden ring-1 ring-slate-900/[0.02]">
-          <div className="insight-card-header bg-gradient-to-r from-brand-blue-deep to-brand-blue text-white px-4 py-3 font-extrabold text-xs uppercase tracking-[0.12em] flex items-center justify-between">
+          <div className="card-header-title bg-surface-blue text-brand-blue-deep border-b border-border-blue px-4 py-2.5 text-center font-extrabold text-xs uppercase tracking-wider">
             <span>Total Sale (Daily Breakdown)</span>
             <span className="text-[10px] font-bold opacity-80 normal-case tracking-normal">By date</span>
           </div>
@@ -578,25 +578,26 @@ function InsightsView({ invoices, adAccounts, vendors, cards = [], series = [], 
             const totalUSD = dayRows.reduce((s, r) => s + r[1].usd, 0);
             const totalBDT = dayRows.reduce((s, r) => s + r[1].bdt, 0);
             return (
-              <table className="w-full">
-                <thead>
-                  <tr>
-                    <th colSpan={3} className="px-4 py-4 text-center bg-gradient-to-br from-brand-orange/8 via-surface-orange to-surface-blue-light border-b border-slate-200/70 dark:border-slate-800">
-                      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-[11px] uppercase tracking-[0.14em]">
-                        <span className="text-slate-500 font-bold">Total Sale</span>
-                        <span className="text-brand-orange font-black text-base tabular-nums tracking-tight">${totalUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                        <span className="text-slate-300">·</span>
-                        <span className="text-brand-blue-deep font-black text-base tabular-nums tracking-tight">৳{totalBDT.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                      </div>
-                    </th>
-                  </tr>
-                  <tr className="text-left">
-                    <th scope="col" className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Date</th>
-                    <th scope="col" className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 text-right">Total Amount USD</th>
-                    <th scope="col" className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 text-right">Total Amount BDT</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              <div className="max-h-[368px] overflow-y-auto">
+                <table className="w-full">
+                  <thead className="sticky top-0 z-10">
+                    <tr>
+                      <th colSpan={3} className="px-4 py-4 text-center bg-gradient-to-br from-brand-orange/8 via-surface-orange to-surface-blue-light border-b border-slate-200/70 dark:border-slate-800">
+                        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-[11px] uppercase tracking-[0.14em]">
+                          <span className="text-slate-500 font-bold">Total Sale</span>
+                          <span className="text-brand-orange font-black text-base tabular-nums tracking-tight">${totalUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                          <span className="text-slate-300">·</span>
+                          <span className="text-brand-blue-deep font-black text-base tabular-nums tracking-tight">৳{totalBDT.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                        </div>
+                      </th>
+                    </tr>
+                    <tr className="text-left bg-white dark:bg-slate-900">
+                      <th scope="col" className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Date</th>
+                      <th scope="col" className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 text-right">Total Amount USD</th>
+                      <th scope="col" className="px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 text-right">Total Amount BDT</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {dayRows.length === 0 ? (
                     <tr>
                       <td colSpan={3} className="px-4 py-6 text-center text-xs text-slate-400 italic">No daily data</td>
@@ -617,13 +618,14 @@ function InsightsView({ invoices, adAccounts, vendors, cards = [], series = [], 
                   )}
                 </tbody>
               </table>
+              </div>
             );
           })()}
         </div>
 
         {/* Channel Wise Vendor Payment (Paid) */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/70 dark:border-slate-800 shadow-sm overflow-hidden ring-1 ring-slate-900/[0.02]">
-          <div className="insight-card-header bg-gradient-to-r from-status-green-deep to-emerald-600 text-white px-4 py-3 font-extrabold text-xs uppercase tracking-[0.12em] flex items-center justify-between">
+          <div className="card-header-title bg-surface-green text-brand-blue-deep border-b border-border-green px-4 py-2.5 text-center font-extrabold text-xs uppercase tracking-wider">
             <span>Channel Wise Vendor Payment (Paid)</span>
             <span className="text-[10px] font-bold opacity-80 normal-case tracking-normal">Settled only</span>
           </div>
@@ -687,7 +689,7 @@ function InsightsView({ invoices, adAccounts, vendors, cards = [], series = [], 
 
         {/* Payment Approval Status + Payment Status */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/70 dark:border-slate-800 shadow-sm overflow-hidden ring-1 ring-slate-900/[0.02]">
-          <div className="insight-card-header bg-gradient-to-r from-brand-blue-deep to-brand-blue text-white px-4 py-3 font-extrabold text-xs uppercase tracking-[0.12em] flex items-center justify-between">
+          <div className="card-header-title bg-surface-yellow text-brand-blue-deep border-b border-border-yellow px-4 py-2.5 text-center font-extrabold text-xs uppercase tracking-wider">
             <span>Approval &amp; Payment Status</span>
             <span className="text-[10px] font-bold opacity-80 normal-case tracking-normal">Aggregated</span>
           </div>

@@ -29,6 +29,7 @@
   --color-surface-green: #F1FBF5;       /* green stat/panel surface */
   --color-surface-orange: #FFF7ED;      /* orange stat/panel surface */
   --color-surface-rose: #FFF1F2;        /* rose stat/panel surface */
+  --color-surface-yellow: #FFFBE6;      /* yellow stat/panel surface */
 
   /* Border tints (match surface tints for stat card outlines) */
   --color-border-blue: #CFE1F5;         /* blue surface border */
@@ -36,6 +37,7 @@
   --color-border-green: #CFEBDD;        /* green surface border */
   --color-border-orange: #FBD9B9;       /* orange surface border */
   --color-border-rose: #F8D6DC;         /* rose surface border */
+  --color-border-yellow: #FDE68A;       /* yellow surface border */
 
   /* App-level background */
   --color-app-bg: #F8F5F0;              /* main app canvas */
@@ -313,14 +315,9 @@ button.bg-\[\#1F5F98\] *,
   color: #ffffff !important;
 }
 
-/* Custom Header Contrast Helper Classes for Insights Tables */
-.bg-navy-header,
-.bg-navy-header *,
-.dark .bg-navy-header,
-.dark .bg-navy-header *,
-#channel-analytics-panel .bg-navy-header,
-#channel-analytics-panel .bg-navy-header *,
-#channel-analytics-panel .card-header-title,
+/* Custom Header Contrast Helper Classes for Insights Tables
+   Only the table column-header <th> cells are forced to navy; the
+   gradient banner titles use their own per-card classes and stay free. */
 #channel-analytics-panel th {
   background-color: #154A7D !important;
   color: #ffffff !important;
